@@ -1,5 +1,7 @@
+require('dotenv').config();
+
 module.exports = {
-    port: 8081,
+    port: process.env.PORT,
     db: {
         database: process.env.DB_NAME || 'trello',
         user: process.env.DB_USER,
