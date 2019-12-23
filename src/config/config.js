@@ -9,8 +9,10 @@ module.exports = {
         options: {
             dialect: process.env.DIALECT || 'mysql',
             host: process.env.HOST,
-            storage: './trello.sqlite',
             operatorsAliases: false
         }
+    },
+    authentication: {
+        jwtSecret: process.env.JWT_SECRET || 'secret'
     }
 };
