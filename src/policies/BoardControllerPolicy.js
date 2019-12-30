@@ -1,34 +1,68 @@
-const Joi = require('Joi');
+const Joi = require('@hapi/Joi');
+const { checkPostError } = require('./CheckError');
 
 module.exports = {
-    postBoard (req, res, next) {
-        const schema = {
-            title: Joi.string().max(30),
-            background: Joi.string().max(20),
-            author_id: Joi.string()
-        };
+    indexAllBoard(req, res, next) {
+        const schema = Joi.object({
+            user_id: Joi.string().required()
+        });
 
-        const { error } = Joi.validate(req.body, schema);
+        const { error } = schema.validate(req.body);
 
         if(error) {
-            switch(error.details[0].context.key) {
-            case 'title':
-                res.status(400).send({
-                    error: '제목을 확인해주세요'
-                });
-                break;
-            case 'background':
-                res.status(400).send({
-                    error: '배경화면 입력 오류'
-                });
-                break;
-            default:
-                res.status(400).send({
-                    error: '오류가 발생하였습니다'
-                });
-            }
+            checkPostError(res, error);
         }else {
             next();
         }
-    } 
+    },
+
+    postBoard (req, res, next) {
+        const schema = Joi.object({
+            title: Joi.string().max(30).required(),
+            background: Joi.string().max(20).required(),
+            user_id: Joi.string().required()
+        });
+
+        const { error } = schema.validate(req.body);
+
+        if(error) {
+            checkPostError(res, error);
+        }else {
+            next();
+        }
+    },
+
+    indexFavoriteBoard(req, res, next) {
+        const schema = Joi.object({
+            user_id: Joi.string().required()
+        });
+
+        const { error } = schema.validate(req.body);
+
+        if(error) {
+            checkPostError(res, error);
+        }else {
+            next();
+        }
+    },
+
+    postFavoriteBoard(req, res, next) {
+        const schema = Joi.object({
+            board_id: Joi.string().required(),
+            user_id: Joi.string().required()
+        });
+
+        const { error } = schema.validate(req.body);
+
+        if(error) {
+            checkPostError(res, error);
+        }else {
+            next();
+        }
+    }
+
+
+
+
+
 };

@@ -21,9 +21,15 @@ module.exports = {
                 token: jwtSignUser(userJson)
             });
         }catch (err) {
-            res.status(400).send({
-                error: 'error'
-            });
+            if(err.original.code === 'ER_DUP_ENTRY') {
+                res.status(400).send({
+                    error: '중복된 데이터가 존재합니다'
+                });
+            }else{
+                res.status(400).send({
+                    error: 'register error'
+                });
+            }
         }
     },
     async login (req, res) {

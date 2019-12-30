@@ -5,6 +5,7 @@ const CardController = require('../controller/CardController');
 const AuthControllerPolicy = require('../policies/AuthControllerPolicy');
 const BoardControllerPolicy = require('../policies/BoardControllerPolicy');
 const ListControllerPolicy = require('../policies/ListControllerPolicy');
+const CardControllerPolicy = require('../policies/CardControllerPolicy');
 
 module.exports = (app) => {
     app.post('/signup', 
@@ -13,10 +14,12 @@ module.exports = (app) => {
     );
 
     app.post('/login', 
+        AuthControllerPolicy.login,
         AuthController.login
     );
 
     app.get('/board', 
+        BoardControllerPolicy.indexAllBoard,
         BoardController.indexAllBoard
     );
 
@@ -29,11 +32,13 @@ module.exports = (app) => {
         BoardController.indexBoard
     );
 
-    app.get('/board/favorite', 
+    app.get('/favorite', 
+        BoardControllerPolicy.indexFavoriteBoard,
         BoardController.indexFavoriteBoard
     );
 
-    app.post('/board/favorite', 
+    app.post('/favorite', 
+        BoardControllerPolicy.postFavoriteBoard,
         BoardController.postFavoriteBoard
     );
 
@@ -42,7 +47,13 @@ module.exports = (app) => {
         ListController.postList
     );   
 
+    app.get('/card', 
+        CardControllerPolicy.indexCard,
+        CardController.indexCard
+    );   
+
     app.post('/card', 
-        CardController.post
+        CardControllerPolicy.postCard,
+        CardController.postCard
     );   
 };

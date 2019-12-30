@@ -14,17 +14,17 @@ app.use(cors());
 
 require('./routes/page')(app);
 
-User.hasMany(Board, { foreignKey: { name: 'author_id', allowNull: false }, sourceKey: 'user_id', onDelete: 'cascade' });
-Board.belongsTo(User, { foreignKey: 'author_id', targetKey: 'user_id' });
+User.hasMany(Board, { foreignKey: { name: 'user_id', allowNull: false }, sourceKey: 'user_id', onDelete: 'cascade' });
+Board.belongsTo(User, { foreignKey: 'user_id', targetKey: 'user_id' });
 
-User.hasMany(Favorite, { foreignKey: { name: 'author_id', allowNull: false }, sourceKey: 'user_id', onDelete: 'cascade' });
-Favorite.belongsTo(User, { foreignKey: 'author_id', targetKey: 'user_id' });
+User.hasMany(Favorite, { foreignKey: { name: 'user_id', allowNull: false }, sourceKey: 'user_id', onDelete: 'cascade' });
+Favorite.belongsTo(User, { foreignKey: 'user_id', targetKey: 'user_id' });
 
-User.hasMany(List, { foreignKey: { name: 'author_id', allowNull: false }, sourceKey: 'user_id', onDelete: 'cascade' });
-List.belongsTo(User, { foreignKey: 'author_id', targetKey: 'user_id' });
+User.hasMany(List, { foreignKey: { name: 'user_id', allowNull: false }, sourceKey: 'user_id', onDelete: 'cascade' });
+List.belongsTo(User, { foreignKey: 'user_id', targetKey: 'user_id' });
 
-User.hasMany(Card, { foreignKey: { name: 'author_id', allowNull: false }, sourceKey: 'user_id', onDelete: 'cascade' });
-Card.belongsTo(User, { foreignKey: 'author_id', targetKey: 'user_id' });
+User.hasMany(Card, { foreignKey: { name: 'user_id', allowNull: false }, sourceKey: 'user_id', onDelete: 'cascade' });
+Card.belongsTo(User, { foreignKey: 'user_id', targetKey: 'user_id' });
 
 Board.hasMany(Favorite, { foreignKey: { name: 'board_id', allowNull: false }, sourceKey: 'board_id', onDelete: 'cascade' });
 Favorite.belongsTo(Board, { foreignKey: 'board_id', targetKey: 'board_id' });
