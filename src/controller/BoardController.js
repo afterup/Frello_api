@@ -4,7 +4,6 @@ module.exports = {
     async indexAllBoard(req, res) {
         try{
             const board = await Board.findAll({
-                limit: 10
             });
             res.send(board);
         }catch(err) {
@@ -29,7 +28,7 @@ module.exports = {
             console.log(req.params);
             const board = await Board.findAll({
                 include: [{ model: List, include: [Card] }],
-                where: { board_id: req.params.id }
+                where: { board_id: req.params.board_id }
             });
 
             if(board.length === 0) {
