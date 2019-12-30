@@ -1,4 +1,4 @@
-const { Board } = require('../models');
+const { Board, Favorite } = require('../models');
 
 module.exports = {
     async index(req, res) {
@@ -20,6 +20,29 @@ module.exports = {
         }catch(err) {
             res.status(500).send({
                 error: 'create error'
+            });
+        }
+    },
+
+    async indexFavoriteBoard(req, res) {
+        try{
+            const favorite = await Favorite.findAll({
+                limit: 10
+            });
+            res.send(favorite);
+        }catch(err) {
+            res.status(500).send({
+                error: 'favorite create error'
+            });
+        }
+    },
+    async postFavoriteBoard(req, res) {
+        try{
+            const favorite = await Favorite.create(req.body);
+            res.send(favorite);
+        }catch(err) {
+            res.status(500).send({
+                error: 'favorite create error'
             });
         }
     }
