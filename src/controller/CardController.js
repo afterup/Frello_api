@@ -1,10 +1,10 @@
 const { Card } = require('../models');
 
 module.exports = {
-    async index(req, res) {
+    async indexCard(req, res) {
         try{
             const card = await Card.findAll({
-                limit: 10
+                where: { card_id: req.body.card_id }
             });
             res.send(card);
         }catch(err) {
@@ -13,7 +13,7 @@ module.exports = {
             });
         }
     },
-    async post(req, res) {
+    async postCard(req, res) {
         try{
             const card = await Card.create(req.body);
             res.send(card);
