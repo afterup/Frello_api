@@ -9,6 +9,7 @@ const { sequelize, User, Board, Favorite, List, Card } = require('./models');
 const app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 require('./routes/page')(app);

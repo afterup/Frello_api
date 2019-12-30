@@ -1,7 +1,7 @@
-const { Board, Favorite } = require('../models');
+const { Board, Favorite, List, Card } = require('../models');
 
 module.exports = {
-    async index(req, res) {
+    async indexAllBoard(req, res) {
         try{
             const board = await Board.findAll({
                 limit: 10
@@ -13,7 +13,7 @@ module.exports = {
             });
         }
     },
-    async post(req, res) {
+    async postBoard(req, res) {
         try{
             const board = await Board.create(req.body);
             res.send(board);
@@ -23,6 +23,29 @@ module.exports = {
             });
         }
     },
+    
+    async indexBoard(req, res) {
+        try{
+            console.log(req.params);
+            const board = await Board.findAll({
+                include: [{ model: List, include: [Card] }],
+                where: { board_id: req.params.id }
+            });
+
+            if(board.length === 0) {
+                res.status(500).send({
+                    error: '유효하지 않는 아이디입니다.'
+                });
+            }else{
+                res.send(board);
+            }
+        }catch(err) {
+            res.status(500).send({
+                error: 'fetch error'
+            });
+        }
+    },
+
 
     async indexFavoriteBoard(req, res) {
         try{

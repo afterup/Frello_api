@@ -15,11 +15,15 @@ module.exports = (app) => {
     );
 
     app.get('/board', 
-        BoardController.index
+        BoardController.indexAllBoard
     );
 
     app.post('/board', 
-        BoardController.post
+        BoardController.postBoard
+    );
+
+    app.get('/board/:id', 
+        BoardController.indexBoard
     );
 
     app.get('/board/favorite', 
