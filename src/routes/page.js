@@ -3,6 +3,7 @@ const BoardController = require('../controller/BoardController');
 const ListController = require('../controller/ListController');
 const CardController = require('../controller/CardController');
 const AuthControllerPolicy = require('../policies/AuthControllerPolicy');
+const BoardControllerPolicy = require('../policies/BoardControllerPolicy');
 
 module.exports = (app) => {
     app.post('/signup', 
@@ -19,6 +20,7 @@ module.exports = (app) => {
     );
 
     app.post('/board', 
+        BoardControllerPolicy.postBoard,
         BoardController.postBoard
     );
 

@@ -19,7 +19,7 @@ module.exports = {
             res.send(board);
         }catch(err) {
             res.status(500).send({
-                error: 'create error'
+                error: 'require title, background, author_id'
             });
         }
     },
