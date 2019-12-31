@@ -1,19 +1,6 @@
 const { Board, Favorite, List, Card } = require('../models');
 
 module.exports = {
-    async indexAllBoard(req, res) {
-        try{
-            console.log(req.body.user_id);
-            const board = await Board.findAll({
-                where: { user_id: req.body.user_id }
-            });
-            res.send(board);
-        }catch(err) {
-            res.status(500).send({
-                error: 'fetch error'
-            });
-        }
-    },
 
     async indexBoard(req, res) {
         try{
@@ -35,20 +22,6 @@ module.exports = {
                 error: 'fetch error'
             });
         }
-    },
-
-    async indexFavoriteBoard(req, res) {
-        try{
-            const favorite = await Favorite.findAll({
-                where: { user_id: req.body.user_id }
-            });
-            res.send(favorite);
-        }catch(err) {
-            res.status(500).send({
-                error: 'favorite create error'
-            });
-        }
     }
-
 
 };

@@ -5,23 +5,24 @@ module.exports = {
         try{
             let model;
             let object;
+            const body = req.body;
             
-            switch(Object.keys(req.body)[0]) {
+            switch(Object.keys(body)[0]) {
             case 'board' :
                 model = Board;
-                object = req.body.board;
+                object = body.board;
                 break;
             case 'list' :
                 model = List;
-                object = req.body.list;
+                object = body.list;
                 break;
             case 'card' :
                 model = Card;
-                object = req.body.card;
+                object = body.card;
                 break;
             case 'favorite':
                 model = Favorite;
-                object = req.body.favorite;
+                object = body.favorite;
             }
             
             const result = await model.create(object);
@@ -36,6 +37,44 @@ module.exports = {
                     error: 'Post Error'
                 });
             }
+        }
+    },
+
+    async fetchPostData(req, res) {
+        try{
+            let model;
+            let whereObject;
+            const body = req.body;
+
+            switch(Object.keys(body)[0]) {
+            case 'board':
+                model = Board;
+                whereObject = { user_id: body.board.user_id };
+                break;
+            case 'card' :
+                model = Card;
+                whereObject = { card_id: body.card.card_id };
+                break;
+            case 'favorite' :
+                model = Favorite;
+                whereObject = { user_id: body.favorite.user_id };
+            }
+
+            const result = await model.findAll({
+                where: whereObject
+            });
+
+            if(result.length === 0) {
+                res.status(400).send({
+                    error: '유효하지 않는 아이디입니다.'
+                });
+            }else{
+                res.send(result);
+            }
+        }catch(err) {
+            res.status(500).send({
+                error: 'fetch error'
+            });
         }
     },
 

@@ -8,6 +8,12 @@ const boardSchema = Joi.object().keys({
     })
 });
 
+const boardFetchSchema = Joi.object().keys({
+    board: Joi.object({
+        user_id: Joi.string().required()
+    })
+});
+
 const boardUpdateSchema = Joi.object().keys({
     board: Joi.object({
         title: Joi.string().max(30).required(),
@@ -45,6 +51,12 @@ const cardSchema = Joi.object().keys({
     })
 });
 
+const cardFetchSchema = Joi.object().keys({
+    card: Joi.object({
+        card_id: Joi.number().required()
+    })
+});
+
 const cardUpdateSchema = Joi.object().keys({
     card: Joi.object({
         title: Joi.string().max(1000).required(),
@@ -56,6 +68,7 @@ const cardUpdateSchema = Joi.object().keys({
     })
 });
 
+
 const favoriteSchema = Joi.object().keys({
     favorite: Joi.object({
         user_id: Joi.string().required(),
@@ -63,12 +76,21 @@ const favoriteSchema = Joi.object().keys({
     })
 });
 
+const favoriteFetchSchema = Joi.object().keys({
+    favorite: Joi.object({
+        user_id: Joi.string().required()
+    })
+});
+
 module.exports = {
     boardSchema,
+    boardFetchSchema,
     boardUpdateSchema,
     listSchema,
     listUpdateSchema,
     cardSchema,
+    cardFetchSchema,
     cardUpdateSchema,
-    favoriteSchema
+    favoriteSchema,
+    favoriteFetchSchema
 };
