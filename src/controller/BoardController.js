@@ -1,5 +1,4 @@
 const { Board, Favorite, List, Card } = require('../models');
-const Sequelize = require('sequelize');
 
 module.exports = {
     async indexAllBoard(req, res) {
@@ -15,17 +14,7 @@ module.exports = {
             });
         }
     },
-    async postBoard(req, res) {
-        try{
-            const board = await Board.create(req.body);
-            res.send(board);
-        }catch(err) {
-            res.status(500).send({
-                error: 'require title, background, user_id'
-            });
-        }
-    },
-    
+
     async indexBoard(req, res) {
         try{
             console.log(req.params);
@@ -76,16 +65,6 @@ module.exports = {
             const favorite = await Favorite.findAll({
                 where: { user_id: req.body.user_id }
             });
-            res.send(favorite);
-        }catch(err) {
-            res.status(500).send({
-                error: 'favorite create error'
-            });
-        }
-    },
-    async postFavoriteBoard(req, res) {
-        try{
-            const favorite = await Favorite.create(req.body);
             res.send(favorite);
         }catch(err) {
             res.status(500).send({

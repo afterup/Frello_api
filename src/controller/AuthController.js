@@ -22,7 +22,7 @@ module.exports = {
             });
         }catch (err) {
             if(err.original.code === 'ER_DUP_ENTRY') {
-                res.status(400).send({
+                res.status(500).send({
                     error: '중복된 데이터가 존재합니다'
                 });
             }else{
