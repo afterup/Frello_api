@@ -3,9 +3,8 @@ module.exports = (sequelize, DataTypes) => {
     const Favorite = sequelize.define('Favorite', {
         // board_id , user_id
         favorite_id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            allowNull: false,
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
             primaryKey: true
         }
     }, { timestamps: false });

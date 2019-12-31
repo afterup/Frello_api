@@ -2,9 +2,8 @@
 module.exports = (sequelize, DataTypes) => { 
     const List = sequelize.define('List', {
         list_id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            allowNull: false,
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
             primaryKey: true
         },
 
