@@ -28,6 +28,11 @@ module.exports = (app) => {
         BoardController.postBoard
     );
 
+    app.patch('/board', 
+        BoardControllerPolicy.updateBoard,
+        BoardController.updateBoard
+    );
+
     app.get('/board/:board_id', 
         BoardController.indexBoard
     );
@@ -47,6 +52,11 @@ module.exports = (app) => {
         ListController.postList
     );   
 
+    app.patch('/list', 
+        ListControllerPolicy.updateList,
+        ListController.updateList
+    );   
+
     app.get('/card', 
         CardControllerPolicy.indexCard,
         CardController.indexCard
@@ -55,5 +65,10 @@ module.exports = (app) => {
     app.post('/card', 
         CardControllerPolicy.postCard,
         CardController.postCard
+    );   
+
+    app.patch('/card', 
+        CardControllerPolicy.updateCard,
+        CardController.updateCard
     );   
 };

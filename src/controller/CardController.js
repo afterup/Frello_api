@@ -22,6 +22,27 @@ module.exports = {
                 error: 'create error'
             });
         }
+    },
+    async updateCard(req, res) {
+        try{
+            const card = await Card.update(
+                req.body,
+                { where: { card_id: req.body.card_id } }
+            );
+
+            if(card[0] === 0) {
+                res.status(400).send({
+                    error: '유효하지 않는 아이디입니다.'
+                });
+            }else{
+                const result = await Card.findOne({ where: { card_id: req.body.card_id } });
+                res.send(result);
+            }
+        }catch(err) {
+            res.status(500).send({
+                error: 'update error'
+            });
+        }
     }
 
 
