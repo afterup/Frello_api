@@ -36,29 +36,6 @@ module.exports = {
             });
         }
     },
-    async updateBoard(req, res) {
-        try{
-            console.log(req.body);
-            const board = await Board.update(
-                req.body,
-                { where: { board_id: req.body.board_id } }
-            );
-
-            if(board[0] === 0) {
-                res.status(400).send({
-                    error: '유효하지 않는 아이디입니다.'
-                });
-            }else{
-                const result = await Board.findOne({ where: { board_id: req.body.board_id } });
-                res.send(result);
-            }
-        }catch(err) {
-            res.status(500).send({
-                error: 'update error'
-            });
-        }
-    },
-
 
     async indexFavoriteBoard(req, res) {
         try{

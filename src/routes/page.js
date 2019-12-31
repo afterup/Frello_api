@@ -2,14 +2,12 @@ const AuthController = require('../controller/AuthController');
 const PostController = require('../controller/PostController');
 
 const BoardController = require('../controller/BoardController');
-const ListController = require('../controller/ListController');
 const CardController = require('../controller/CardController');
 
 const AuthControllerPolicy = require('../policies/AuthControllerPolicy');
 const PostControllerPolicy = require('../policies/PostControllerPolicy');
 
 const BoardControllerPolicy = require('../policies/BoardControllerPolicy');
-const ListControllerPolicy = require('../policies/ListControllerPolicy');
 const CardControllerPolicy = require('../policies/CardControllerPolicy');
 
 module.exports = (app) => {
@@ -34,8 +32,8 @@ module.exports = (app) => {
     );
 
     app.patch('/board', 
-        BoardControllerPolicy.updateBoard,
-        BoardController.updateBoard
+        PostControllerPolicy.updatePostData,
+        PostController.updatePostData
     );
 
     app.get('/board/:board_id', 
@@ -58,8 +56,8 @@ module.exports = (app) => {
     );   
 
     app.patch('/list', 
-        ListControllerPolicy.updateList,
-        ListController.updateList
+        PostControllerPolicy.updatePostData,
+        PostController.updatePostData
     );   
 
     app.get('/card', 
@@ -73,7 +71,7 @@ module.exports = (app) => {
     );   
 
     app.patch('/card', 
-        CardControllerPolicy.updateCard,
-        CardController.updateCard
+        PostControllerPolicy.updatePostData,
+        PostController.updatePostData
     );   
 };
