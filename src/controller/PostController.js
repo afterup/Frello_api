@@ -49,7 +49,14 @@ module.exports = {
             switch(Object.keys(body)[0]) {
             case 'board':
                 model = Board;
-                whereObject = { user_id: body.board.user_id };
+                if(body.board.user_id) {
+                    whereObject = { user_id: body.board.user_id };
+                }else {
+                    whereObject = {
+                        include: [{ model: List, include: [Card] }],
+                        where: { board_id: req.params.board_id }
+                    };
+                }
                 break;
             case 'card' :
                 model = Card;
@@ -61,7 +68,7 @@ module.exports = {
             }
 
             const result = await model.findAll({
-                where: whereObject
+                whereObject
             });
 
             if(result.length === 0) {

@@ -3,6 +3,7 @@ const {
     boardSchema,
     boardUpdateSchema,
     boardIdSchema,
+    boardUserIdSchema,
     listSchema,
     listUpdateSchema,
     listIdSchema,
@@ -50,7 +51,7 @@ module.exports = {
 
         switch(Object.keys(req.body)[0]) {
         case 'board' :
-            schema = boardIdSchema;
+            schema = boardUserIdSchema;
             break;
         case 'card' :
             schema = cardIdSchema;

@@ -1,5 +1,6 @@
 const Joi = require('@hapi/Joi');
 
+/* Auth Schema */
 const registerSchema = Joi.object().keys({
     user: Joi.object({
         email: Joi.string().email().required(),
@@ -36,6 +37,7 @@ const userDeleteSchema = Joi.object().keys({
     })
 });
 
+/* Board Schema */
 const boardSchema = Joi.object().keys({
     board: Joi.object({
         title: Joi.string().max(30).required(),
@@ -45,6 +47,12 @@ const boardSchema = Joi.object().keys({
 });
 
 const boardIdSchema = Joi.object().keys({
+    board: Joi.object({
+        board_id: Joi.string().required()
+    })
+});
+
+const boardUserIdSchema = Joi.object().keys({
     board: Joi.object({
         user_id: Joi.string().required()
     })
@@ -58,6 +66,7 @@ const boardUpdateSchema = Joi.object().keys({
     })
 });
 
+/* List Schema */
 const listSchema = Joi.object().keys({
     list: Joi.object({
         title: Joi.string().max(1000).required(),
@@ -83,6 +92,7 @@ const listIdSchema = Joi.object().keys({
     })
 });
 
+/* Card Schema */
 const cardSchema = Joi.object().keys({
     card: Joi.object({
         title: Joi.string().max(1000).required(),
@@ -110,7 +120,7 @@ const cardUpdateSchema = Joi.object().keys({
     })
 });
 
-
+/* Favorite Schema */
 const favoriteSchema = Joi.object().keys({
     favorite: Joi.object({
         user_id: Joi.string().required(),
@@ -138,6 +148,7 @@ module.exports = {
     boardSchema,
     boardUpdateSchema,
     boardIdSchema,
+    boardUserIdSchema,
     listSchema,
     listUpdateSchema,
     listIdSchema,
