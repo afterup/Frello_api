@@ -95,7 +95,7 @@ module.exports = {
     async deleteUser(req, res) {
         try{
             const user = await User.destroy(
-                { where: { user_id: req.body.user.user_id } }
+                { where: { user_id: req.params.id } }
             );
 
             if(user === 0) {

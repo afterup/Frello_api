@@ -1,31 +1,31 @@
-const { Board, Favorite, List, Card } = require('../models');
+const { User, Board, Favorite, List, Card } = require('../models');
 
 module.exports = {
     async createPostData(req, res) {
         try{
             let model;
-            let object;
+            let option;
             const body = req.body;
             
             switch(Object.keys(body)[0]) {
             case 'board' :
                 model = Board;
-                object = body.board;
+                option = body.board;
                 break;
             case 'list' :
                 model = List;
-                object = body.list;
+                option = body.list;
                 break;
             case 'card' :
                 model = Card;
-                object = body.card;
+                option = body.card;
                 break;
             case 'favorite':
                 model = Favorite;
-                object = body.favorite;
+                option = body.favorite;
             }
             
-            const result = await model.create(object);
+            const result = await model.create(option);
             res.send(result);
         }catch(err) {
             if(err.original.code === 'ER_NO_REFERENCED_ROW_2') {
@@ -43,33 +43,53 @@ module.exports = {
     async fetchPostData(req, res) {
         try{
             let model;
-            let whereObject;
-            const body = req.body;
+            let option;
+            const params = req.params;
 
-            switch(Object.keys(body)[0]) {
-            case 'board':
-                model = Board;
-                if(body.board.user_id) {
-                    whereObject = { user_id: body.board.user_id };
-                }else {
-                    whereObject = {
-                        include: [{ model: List, include: [Card] }],
-                        where: { board_id: req.params.board_id }
-                    };
+            switch(req.url.split('/')[1]) {
+            case 'boards' : {
+                const user = await User.findOne({ 
+                    where: { username: params.username },
+                    order: [['updatedAt', 'ASC']]
                 }
+                );
+
+                model = Board;
+                option = { where: { user_id: user.user_id } };
+                break;
+            }
+            case 'board' :
+                model = Board;
+                option = {
+                    include: [{ 
+                        model: List, 
+                        include: [{
+                            model: Card,
+                            order: [['position', 'ASC']]
+                        }],
+                        order: [['position', 'ASC']]
+                    }],
+                    where: { board_id: params.id }
+                };
                 break;
             case 'card' :
                 model = Card;
-                whereObject = { card_id: body.card.card_id };
+                option = { 
+                    where: { card_id: params.id }
+                };
                 break;
             case 'favorite' :
                 model = Favorite;
-                whereObject = { user_id: body.favorite.user_id };
+                option = { 
+                    where: { user_id: params.id },
+                    order: [['updatedAt', 'ASC']]
+                };
+                break;
             }
 
-            const result = await model.findAll({
-                whereObject
-            });
+            const result = await model.findAll(
+                option
+            );
 
             if(result.length === 0) {
                 res.status(400).send({
@@ -79,6 +99,7 @@ module.exports = {
                 res.send(result);
             }
         }catch(err) {
+            console.log(err);
             res.status(500).send({
                 error: 'fetch error'
             });
@@ -89,28 +110,28 @@ module.exports = {
         try{
             let model;
             let bodyObject;
-            let whereObject;
+            let option;
 
             switch(Object.keys(req.body)[0]) {
             case 'board' :
                 model = Board;
                 bodyObject = req.body.board;
-                whereObject = { where: { board_id: bodyObject.board_id } };
+                option = { where: { board_id: bodyObject.board_id } };
                 break;
             case 'list' :
                 model = List;
                 bodyObject = req.body.list;
-                whereObject = { where: { list_id: bodyObject.list_id } };
+                option = { where: { list_id: bodyObject.list_id } };
                 break;
             case 'card' :
                 model = Card;
                 bodyObject = req.body.card;
-                whereObject = { where: { card_id: bodyObject.card_id } };
+                option = { where: { card_id: bodyObject.card_id } };
                 break;            
             }
             const result = await model.update(
                 bodyObject,
-                whereObject
+                option
             );
 
             if(result[0] === 0) {
@@ -118,7 +139,7 @@ module.exports = {
                     error: '유효하지 않는 아이디입니다.'
                 });
             }else{
-                const resultObject = await model.findOne(whereObject);
+                const resultObject = await model.findOne(option);
                 res.send(resultObject);
             }
         }catch(err) {
@@ -131,29 +152,29 @@ module.exports = {
     async deletePostData(req, res) {
         try{
             let model;
-            let whereObject;
+            let option;
 
-            switch(Object.keys(req.body)[0]) {
+            switch(req.url.split('/')[1]) {
             case 'board' :
                 model = Board;
-                whereObject = { where: { board_id: req.body.board.board_id } };
+                option = { where: { board_id: req.params.id } };
                 break;
             case 'list' :
                 model = List;
-                whereObject = { where: { list_id: req.body.list.list_id } };
+                option = { where: { list_id: req.params.id } };
                 break;
             case 'card' :
                 model = Card;
-                whereObject = { where: { card_id: req.body.card.card_id } };
+                option = { where: { card_id: req.params.id } };
                 break;       
             case 'favorite' :
                 model = Favorite;
-                whereObject = { where: { favorite_id: req.body.favorite.favorite_id } };    
+                option = { where: { favorite_id: req.params.id } };    
                 break;
             }
             
             const result = await model.destroy(
-                whereObject
+                option
             );
 
             if(result === 0) {

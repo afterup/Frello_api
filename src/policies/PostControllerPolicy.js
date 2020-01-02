@@ -1,9 +1,10 @@
 const { checkPostError } = require('./CheckError');
+const Joi = require('@hapi/joi');
 const {
     boardSchema,
     boardUpdateSchema,
-    boardIdSchema,
     boardUserIdSchema,
+    boardIdSchema,
     listSchema,
     listUpdateSchema,
     listIdSchema,
@@ -11,7 +12,6 @@ const {
     cardUpdateSchema,
     cardIdSchema,
     favoriteSchema,
-    favoriteUserIdSchema,
     favoriteIdSchema
 } = require('./Schema');
 
@@ -47,26 +47,11 @@ module.exports = {
         checkNext(req.body, schema, res, next);
     },
     fetchPostData(req, res, next) {
-        let schema;
-
-        switch(Object.keys(req.body)[0]) {
-        case 'board' :
-            schema = boardUserIdSchema;
-            break;
-        case 'card' :
-            schema = cardIdSchema;
-            break;
-        case 'list' :
-            schema = listIdSchema;
-            break; 
-        case 'favorite' :
-            schema = favoriteUserIdSchema;
-            break;
-        default:
-            res.status(400).send({ error: '잘못된 데이터 전송' });
-            return;
-        }
-        checkNext(req.body, schema, res, next);
+        const schema = Joi.object({
+            id: Joi.number().required()
+        });
+    
+        checkNext(req.params, schema, res, next);
     },
     updatePostData (req, res, next) {
         let schema;
@@ -89,26 +74,10 @@ module.exports = {
     },
 
     deletePostData(req, res, next) {
-        let schema;
-
-        switch(Object.keys(req.body)[0]) {
-        case 'board' :
-            schema = boardIdSchema;
-            break;
-        case 'card' :
-            schema = cardIdSchema;
-            break;
-        case 'list' :
-            schema = listIdSchema;
-            break; 
-        case 'favorite' :
-            schema = favoriteIdSchema;
-            break;
-        default:
-            res.status(400).send({ error: '잘못된 데이터 전송' });
-            return;
-        }
-        checkNext(req.body, schema, res, next);
+        const schema = Joi.object({
+            id: Joi.number().required()
+        });
+        checkNext(req.params, schema, res, next);
     }
 
 

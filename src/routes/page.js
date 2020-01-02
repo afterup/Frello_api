@@ -3,9 +3,8 @@ const PostController = require('../controller/PostController');
 const AuthControllerPolicy = require('../policies/AuthControllerPolicy');
 const PostControllerPolicy = require('../policies/PostControllerPolicy');
 
-const BoardController = require('../controller/BoardController');
-
 module.exports = (app) => {
+    /* Auth */
     app.post('/signup', 
         AuthControllerPolicy.register,
         AuthController.register
@@ -21,12 +20,18 @@ module.exports = (app) => {
         AuthController.updateUser
     );
 
-    app.delete('/user', 
+    app.delete('/user/:id', 
         AuthControllerPolicy.deleteUser,
         AuthController.deleteUser
     );
 
-    app.get('/board', 
+    /* Board */
+    app.get('/board/:id', 
+        PostControllerPolicy.fetchPostData,
+        PostController.fetchPostData
+    );
+    
+    app.get('/boards/:username', 
         PostControllerPolicy.fetchPostData,
         PostController.fetchPostData
     );
@@ -41,16 +46,14 @@ module.exports = (app) => {
         PostController.updatePostData
     );
 
-    app.delete('/board',
+    app.delete('/board/:id',
         PostControllerPolicy.deletePostData,
         PostController.deletePostData
     );
 
-    app.get('/board/:board_id', 
-        BoardController.indexBoard
-    );
 
-    app.get('/favorite', 
+    /* Favorite */
+    app.get('/favorite/:id', 
         PostControllerPolicy.fetchPostData,
         PostController.fetchPostData
     );
@@ -60,11 +63,12 @@ module.exports = (app) => {
         PostController.createPostData
     );
 
-    app.delete('/favorite', 
+    app.delete('/favorite/:id', 
         PostControllerPolicy.deletePostData,
         PostController.deletePostData
     );
 
+    /* List */
     app.post('/list', 
         PostControllerPolicy.createPostData,
         PostController.createPostData
@@ -75,12 +79,13 @@ module.exports = (app) => {
         PostController.updatePostData
     );   
 
-    app.delete('/list', 
+    app.delete('/list/:id', 
         PostControllerPolicy.deletePostData,
         PostController.deletePostData
     );   
 
-    app.get('/card', 
+    /* Card */
+    app.get('/card/:id', 
         PostControllerPolicy.fetchPostData,
         PostController.fetchPostData
     );   
@@ -95,7 +100,7 @@ module.exports = (app) => {
         PostController.updatePostData
     );   
 
-    app.delete('/card', 
+    app.delete('/card/:id', 
         PostControllerPolicy.deletePostData,
         PostController.deletePostData
     );   
