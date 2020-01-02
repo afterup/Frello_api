@@ -46,17 +46,6 @@ const boardSchema = Joi.object().keys({
     })
 });
 
-const boardIdSchema = Joi.object().keys({
-    board: Joi.object({
-        board_id: Joi.string().required()
-    })
-});
-
-const boardUserIdSchema = Joi.object().keys({
-    board: Joi.object({
-        user_id: Joi.string().required()
-    })
-});
 
 const boardUpdateSchema = Joi.object().keys({
     board: Joi.object({
@@ -86,12 +75,6 @@ const listUpdateSchema = Joi.object().keys({
     })
 });
 
-const listIdSchema = Joi.object().keys({
-    list: Joi.object({
-        list_id: Joi.number().required()
-    })
-});
-
 /* Card Schema */
 const cardSchema = Joi.object().keys({
     card: Joi.object({
@@ -100,12 +83,6 @@ const cardSchema = Joi.object().keys({
         user_id: Joi.string().required(),
         list_id: Joi.number().required(),
         position: Joi.number().required()
-    })
-});
-
-const cardIdSchema = Joi.object().keys({
-    card: Joi.object({
-        card_id: Joi.number().required()
     })
 });
 
@@ -128,17 +105,6 @@ const favoriteSchema = Joi.object().keys({
     })
 });
 
-const favoriteUserIdSchema = Joi.object().keys({
-    favorite: Joi.object({
-        user_id: Joi.string().required()
-    })
-});
-
-const favoriteIdSchema = Joi.object().keys({
-    favorite: Joi.object({
-        favorite_id: Joi.number().required()
-    })
-});
 
 module.exports = {
     registerSchema,
@@ -147,15 +113,9 @@ module.exports = {
     userDeleteSchema,
     boardSchema,
     boardUpdateSchema,
-    boardIdSchema,
-    boardUserIdSchema,
     listSchema,
     listUpdateSchema,
-    listIdSchema,
     cardSchema,
     cardUpdateSchema,
-    cardIdSchema,
-    favoriteSchema,
-    favoriteUserIdSchema,
-    favoriteIdSchema
+    favoriteSchema
 };

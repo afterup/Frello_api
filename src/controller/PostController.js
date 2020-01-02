@@ -48,11 +48,12 @@ module.exports = {
 
             switch(req.url.split('/')[1]) {
             case 'boards' : {
-                const user = await User.findOne({ 
-                    where: { username: params.username },
-                    order: [['updatedAt', 'ASC']]
+                const user = await User.find({ 
+                    where: { username: params.username }
                 }
                 );
+
+                console.log(user.user_id);
 
                 model = Board;
                 option = { where: { user_id: user.user_id } };
@@ -91,13 +92,7 @@ module.exports = {
                 option
             );
 
-            if(result.length === 0) {
-                res.status(400).send({
-                    error: '유효하지 않는 아이디입니다.'
-                });
-            }else{
-                res.send(result);
-            }
+            res.send(result);
         }catch(err) {
             console.log(err);
             res.status(500).send({

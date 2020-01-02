@@ -26,6 +26,11 @@ module.exports = {
                 error: 'favorite_id 확인해주세요'
             });
             break;
+        case 'username':
+            res.status(400).send({
+                error: 'username을 확인해주세요'
+            });
+            break;
         case 'title':
             res.status(400).send({
                 error: '제목을 확인해주세요'
@@ -48,7 +53,7 @@ module.exports = {
             break;
         default:
             res.status(400).send({
-                error: '오류가 발생했습니다'
+                error: 'validation error'
             });
         }
     },
@@ -77,7 +82,7 @@ module.exports = {
             break;
         default:
             res.status(400).send({
-                error: '오류가 발생하였습니다'
+                error: 'validation error'
             });
         }
     }

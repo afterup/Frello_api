@@ -3,16 +3,11 @@ const Joi = require('@hapi/joi');
 const {
     boardSchema,
     boardUpdateSchema,
-    boardUserIdSchema,
-    boardIdSchema,
     listSchema,
     listUpdateSchema,
-    listIdSchema,
     cardSchema,
     cardUpdateSchema,
-    cardIdSchema,
-    favoriteSchema,
-    favoriteIdSchema
+    favoriteSchema
 } = require('./Schema');
 
 function checkNext(body, schema, res, next) {
@@ -43,15 +38,24 @@ module.exports = {
             break;
         default:
             res.status(400).send({ error: '잘못된 데이터 전송' });
+            return;
         }
         checkNext(req.body, schema, res, next);
     },
     fetchPostData(req, res, next) {
-        const schema = Joi.object({
-            id: Joi.number().required()
-        });
-    
-        checkNext(req.params, schema, res, next);
+        if(Object.keys(req.params)[0] === 'username') {
+            const schema = Joi.object({
+                username: Joi.string().required()
+            });
+        
+            checkNext(req.params, schema, res, next);
+        }else {
+            const schema = Joi.object({
+                id: Joi.number().required()
+            });
+        
+            checkNext(req.params, schema, res, next);
+        }
     },
     updatePostData (req, res, next) {
         let schema;
