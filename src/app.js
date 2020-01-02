@@ -12,7 +12,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
-require('./routes/page')(app);
+require('./routes/auth')(app);
+require('./routes/board')(app);
+require('./routes/card')(app);
+require('./routes/list')(app);
 
 User.hasMany(Board, { foreignKey: { name: 'user_id', allowNull: false }, sourceKey: 'user_id', onDelete: 'cascade' });
 Board.belongsTo(User, { foreignKey: 'user_id', targetKey: 'user_id' });
