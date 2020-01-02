@@ -30,6 +30,12 @@ const userUpdateSchema = Joi.object().keys({
     })
 });
 
+const userDeleteSchema = Joi.object().keys({
+    user: Joi.object({
+        user_id: Joi.string().required()
+    })
+});
+
 const boardSchema = Joi.object().keys({
     board: Joi.object({
         title: Joi.string().max(30).required(),
@@ -128,6 +134,7 @@ module.exports = {
     registerSchema,
     loginSchema,
     userUpdateSchema,
+    userDeleteSchema,
     boardSchema,
     boardUpdateSchema,
     boardIdSchema,

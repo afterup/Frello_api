@@ -21,6 +21,11 @@ module.exports = (app) => {
         AuthController.updateUser
     );
 
+    app.delete('/user', 
+        AuthControllerPolicy.deleteUser,
+        AuthController.deleteUser
+    );
+
     app.get('/board', 
         PostControllerPolicy.fetchPostData,
         PostController.fetchPostData

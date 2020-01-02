@@ -90,6 +90,26 @@ module.exports = {
                 });
             }
         }
+    },
+
+    async deleteUser(req, res) {
+        try{
+            const user = await User.destroy(
+                { where: { user_id: req.body.user.user_id } }
+            );
+
+            if(user === 0) {
+                res.status(400).send({
+                    error: '유효하지 않는 id입니다'
+                });
+            }else {
+                res.status(200).send('success');
+            }
+        }catch(err) {
+            res.status(400).send({
+                error: 'delete error'
+            });
+        }
     }
 
 
