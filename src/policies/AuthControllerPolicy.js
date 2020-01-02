@@ -2,43 +2,38 @@ const { checkAuthError } = require('./CheckError');
 const {
     registerSchema,
     loginSchema,
-    userUpdateSchema
+    userUpdateSchema,
+    userDeleteSchema
 } = require('./Schema');
+
+function checkNext(body, schema, res, next) {
+    const { error } = schema.validate(body);
+
+    if(error) {
+        checkAuthError(res, error);
+    }else {
+        next();
+    }
+}
 
 module.exports = {
     register (req, res, next) {
         const schema = registerSchema;
-
-        const { error } = schema.validate(req.body);
-
-        if(error) {
-            checkAuthError(res, error);
-        }else {
-            next();
-        }
+        checkNext(req.body, schema, res, next);
     },
     
     login(req, res, next) {
         const schema = loginSchema;
-
-        const { error } = schema.validate(req.body);
-
-        if(error) {
-            checkAuthError(res, error);
-        }else {
-            next();
-        }
+        checkNext(req.body, schema, res, next);
     },
 
     updateUser (req, res, next) {
         const schema = userUpdateSchema;
+        checkNext(req.body, schema, res, next);
+    },
 
-        const { error } = schema.validate(req.body);
-
-        if(error) {
-            checkAuthError(res, error);
-        }else {
-            next();
-        }
+    deleteUser (req, res, next) {
+        const schema = userDeleteSchema;
+        checkNext(req.body, schema, res, next);
     }
 };

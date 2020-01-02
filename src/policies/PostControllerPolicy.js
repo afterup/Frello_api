@@ -14,6 +14,15 @@ const {
     favoriteIdSchema
 } = require('./Schema');
 
+function checkNext(body, schema, res, next) {
+    const { error } = schema.validate(body);
+    if(error) {
+        checkPostError(res, error);
+    }else {
+        next();
+    }
+}
+
 module.exports = {
     createPostData(req, res, next) {
         let schema;
@@ -33,15 +42,8 @@ module.exports = {
             break;
         default:
             res.status(400).send({ error: '잘못된 데이터 전송' });
-            return;
         }
-
-        const { error } = schema.validate(req.body);
-        if(error) {
-            checkPostError(res, error);
-        }else {
-            next();
-        }
+        checkNext(req.body, schema, res, next);
     },
     fetchPostData(req, res, next) {
         let schema;
@@ -63,14 +65,7 @@ module.exports = {
             res.status(400).send({ error: '잘못된 데이터 전송' });
             return;
         }
-
-        const { error } = schema.validate(req.body);
-
-        if(error) {
-            checkPostError(res, error);
-        }else {
-            next();
-        }
+        checkNext(req.body, schema, res, next);
     },
     updatePostData (req, res, next) {
         let schema;
@@ -89,13 +84,7 @@ module.exports = {
             res.status(400).send({ error: '잘못된 데이터 전송' });
             return;
         }
-
-        const { error } = schema.validate(req.body);
-        if(error) {
-            checkPostError(res, error);
-        }else {
-            next();
-        }
+        checkNext(req.body, schema, res, next);
     },
 
     deletePostData(req, res, next) {
@@ -118,14 +107,7 @@ module.exports = {
             res.status(400).send({ error: '잘못된 데이터 전송' });
             return;
         }
-
-        const { error } = schema.validate(req.body);
-
-        if(error) {
-            checkPostError(res, error);
-        }else {
-            next();
-        }
+        checkNext(req.body, schema, res, next);
     }
 
 
