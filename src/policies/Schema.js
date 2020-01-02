@@ -1,5 +1,35 @@
 const Joi = require('@hapi/Joi');
 
+const registerSchema = Joi.object().keys({
+    user: Joi.object({
+        email: Joi.string().email().required(),
+        username: Joi.string().min(3).max(20).required(),
+        password: Joi.string()
+            .regex(new RegExp('^[a-zA-Z0-9]{8,30}$'))
+            .required()
+    })
+});
+
+const loginSchema = Joi.object().keys({
+    user: Joi.object({
+        email: Joi.string().email().required(),
+        password: Joi.string()
+            .regex(new RegExp('^[a-zA-Z0-9]{8,30}$'))
+            .required()
+    })
+});
+
+const userUpdateSchema = Joi.object().keys({
+    user: Joi.object({
+        email: Joi.string().email().allow(null),
+        username: Joi.string().min(3).max(20).allow(null),
+        password: Joi.string()
+            .regex(new RegExp('^[a-zA-Z0-9]{8,30}$'))
+            .allow(null),
+        user_id: Joi.string().required()
+    })
+});
+
 const boardSchema = Joi.object().keys({
     board: Joi.object({
         title: Joi.string().max(30).required(),
@@ -95,6 +125,9 @@ const favoriteIdSchema = Joi.object().keys({
 });
 
 module.exports = {
+    registerSchema,
+    loginSchema,
+    userUpdateSchema,
     boardSchema,
     boardUpdateSchema,
     boardIdSchema,

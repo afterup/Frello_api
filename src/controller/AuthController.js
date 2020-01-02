@@ -13,8 +13,7 @@ module.exports = {
     async register (req, res) {
         console.log(req.body);
         try {
-            console.log('sdf');
-            const user = await User.create(req.body);
+            const user = await User.create(req.body.user);
             const userJson = user.toJSON();
             res.status(201).json({
                 user: userJson,
@@ -34,7 +33,7 @@ module.exports = {
     },
     async login (req, res) {
         try {
-            const{ email, password } = req.body;
+            const{ email, password } = req.body.user;
             const user = await User.findOne({
                 where: {
                     email: email

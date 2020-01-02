@@ -1,15 +1,13 @@
-const Joi = require('@hapi/Joi');
 const { checkAuthError } = require('./CheckError');
+const {
+    registerSchema,
+    loginSchema,
+    userUpdateSchema
+} = require('./Schema');
 
 module.exports = {
     register (req, res, next) {
-        const schema = Joi.object({
-            email: Joi.string().email().required(),
-            username: Joi.string().min(3).max(20).required(),
-            password: Joi.string()
-                .regex(new RegExp('^[a-zA-Z0-9]{8,30}$'))
-                .required()
-        });
+        const schema = registerSchema;
 
         const { error } = schema.validate(req.body);
 
@@ -21,12 +19,7 @@ module.exports = {
     },
     
     login(req, res, next) {
-        const schema = Joi.object({
-            email: Joi.string().email().required(),
-            password: Joi.string()
-                .regex(new RegExp('^[a-zA-Z0-9]{8,30}$'))
-                .required()
-        });
+        const schema = loginSchema;
 
         const { error } = schema.validate(req.body);
 
@@ -38,16 +31,7 @@ module.exports = {
     },
 
     updateUser (req, res, next) {
-        const schema = Joi.object().keys({
-            user: Joi.object({
-                email: Joi.string().email().allow(null),
-                username: Joi.string().min(3).max(20).allow(null),
-                password: Joi.string()
-                    .regex(new RegExp('^[a-zA-Z0-9]{8,30}$'))
-                    .allow(null),
-                user_id: Joi.string().required()
-            })
-        });
+        const schema = userUpdateSchema;
 
         const { error } = schema.validate(req.body);
 
