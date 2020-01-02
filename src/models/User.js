@@ -35,7 +35,12 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         hooks: {
-            beforeSave: hashPassword
+            beforeBulkUpdate: function(options) {
+                options.individualHooks = true;
+                return options;
+            },
+            beforeCreate: hashPassword,
+            beforeUpdate: hashPassword
         },
         timestamps: true
     }

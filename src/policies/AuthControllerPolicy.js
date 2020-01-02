@@ -35,5 +35,26 @@ module.exports = {
         }else {
             next();
         }
+    },
+
+    updateUser (req, res, next) {
+        const schema = Joi.object().keys({
+            user: Joi.object({
+                email: Joi.string().email().allow(null),
+                username: Joi.string().min(3).max(20).allow(null),
+                password: Joi.string()
+                    .regex(new RegExp('^[a-zA-Z0-9]{8,30}$'))
+                    .allow(null),
+                user_id: Joi.string().required()
+            })
+        });
+
+        const { error } = schema.validate(req.body);
+
+        if(error) {
+            checkAuthError(res, error);
+        }else {
+            next();
+        }
     }
 };

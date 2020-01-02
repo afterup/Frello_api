@@ -55,6 +55,11 @@ module.exports = {
 
     checkAuthError(res, error) {
         switch(error.details[0].context.key) {
+        case 'user_id':
+            res.status(400).send({
+                error: 'user_id를 확인해주세요'
+            });
+            break;
         case 'email':
             res.status(400).send({
                 error: '이메일을 확인해주세요'

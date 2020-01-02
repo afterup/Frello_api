@@ -64,6 +64,33 @@ module.exports = {
                 error: '로그인에 실패하였습니다.'
             });
         }
+    },
+
+    async updateUser (req, res) {
+        try{
+            const user = await User.update(
+                req.body.user,
+                { where: { user_id: req.body.user.user_id } }
+            );
+            
+            if(user[0] === 0) {
+                res.status(400).send({
+                    error: '유효하지 않는 id입니다'
+                });
+            }else {
+                res.status(201).send(user[1][0]);
+            }
+        }catch(err) {
+            if(err.original.code === 'ER_DUP_ENTRY') {
+                res.status(500).send({
+                    error: '중복된 데이터가 존재합니다'
+                });
+            }else{
+                res.status(400).send({
+                    error: 'user update error'
+                });
+            }
+        }
     }
 
 

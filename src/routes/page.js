@@ -16,6 +16,11 @@ module.exports = (app) => {
         AuthController.login
     );
 
+    app.patch('/user', 
+        AuthControllerPolicy.updateUser,
+        AuthController.updateUser
+    );
+
     app.get('/board', 
         PostControllerPolicy.fetchPostData,
         PostController.fetchPostData
