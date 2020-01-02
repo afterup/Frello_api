@@ -119,5 +119,48 @@ module.exports = {
                 error: 'Update error'
             });
         }
+    },
+
+    async deletePostData(req, res) {
+        try{
+            let model;
+            let whereObject;
+
+            switch(Object.keys(req.body)[0]) {
+            case 'board' :
+                model = Board;
+                whereObject = { where: { board_id: req.body.board.board_id } };
+                break;
+            case 'list' :
+                model = List;
+                whereObject = { where: { list_id: req.body.list.list_id } };
+                break;
+            case 'card' :
+                model = Card;
+                whereObject = { where: { card_id: req.body.card.card_id } };
+                break;       
+            case 'favorite' :
+                model = Favorite;
+                whereObject = { where: { favorite_id: req.body.favorite.favorite_id } };    
+                break;
+            }
+            
+            const result = await model.destroy(
+                whereObject
+            );
+
+            if(result === 0) {
+                res.status(400).send({
+                    error: '유효하지 않는 아이디입니다.'
+                });
+            }else{
+                res.send('success');
+            }
+        }catch(err) {
+            console.log(err);
+            res.status(500).send({
+                error: 'delete error'
+            });
+        }
     }
 };

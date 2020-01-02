@@ -31,6 +31,11 @@ module.exports = (app) => {
         PostController.updatePostData
     );
 
+    app.delete('/board',
+        PostControllerPolicy.deletePostData,
+        PostController.deletePostData
+    );
+
     app.get('/board/:board_id', 
         BoardController.indexBoard
     );
@@ -45,6 +50,11 @@ module.exports = (app) => {
         PostController.createPostData
     );
 
+    app.delete('/favorite', 
+        PostControllerPolicy.deletePostData,
+        PostController.deletePostData
+    );
+
     app.post('/list', 
         PostControllerPolicy.createPostData,
         PostController.createPostData
@@ -53,6 +63,11 @@ module.exports = (app) => {
     app.patch('/list', 
         PostControllerPolicy.updatePostData,
         PostController.updatePostData
+    );   
+
+    app.delete('/list', 
+        PostControllerPolicy.deletePostData,
+        PostController.deletePostData
     );   
 
     app.get('/card', 
@@ -68,5 +83,10 @@ module.exports = (app) => {
     app.patch('/card', 
         PostControllerPolicy.updatePostData,
         PostController.updatePostData
+    );   
+
+    app.delete('/card', 
+        PostControllerPolicy.deletePostData,
+        PostController.deletePostData
     );   
 };

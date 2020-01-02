@@ -1,15 +1,17 @@
 const { checkPostError } = require('./CheckError');
 const {
     boardSchema,
-    boardFetchSchema,
     boardUpdateSchema,
+    boardIdSchema,
     listSchema,
     listUpdateSchema,
+    listIdSchema,
     cardSchema,
-    cardFetchSchema,
     cardUpdateSchema,
+    cardIdSchema,
     favoriteSchema,
-    favoriteFetchSchema
+    favoriteUserIdSchema,
+    favoriteIdSchema
 } = require('./Schema');
 
 module.exports = {
@@ -46,13 +48,16 @@ module.exports = {
 
         switch(Object.keys(req.body)[0]) {
         case 'board' :
-            schema = boardFetchSchema;
+            schema = boardIdSchema;
             break;
         case 'card' :
-            schema = cardFetchSchema;
+            schema = cardIdSchema;
             break;
+        case 'list' :
+            schema = listIdSchema;
+            break; 
         case 'favorite' :
-            schema = favoriteFetchSchema;
+            schema = favoriteUserIdSchema;
             break;
         default:
             res.status(400).send({ error: '잘못된 데이터 전송' });
@@ -86,6 +91,36 @@ module.exports = {
         }
 
         const { error } = schema.validate(req.body);
+        if(error) {
+            checkPostError(res, error);
+        }else {
+            next();
+        }
+    },
+
+    deletePostData(req, res, next) {
+        let schema;
+
+        switch(Object.keys(req.body)[0]) {
+        case 'board' :
+            schema = boardIdSchema;
+            break;
+        case 'card' :
+            schema = cardIdSchema;
+            break;
+        case 'list' :
+            schema = listIdSchema;
+            break; 
+        case 'favorite' :
+            schema = favoriteIdSchema;
+            break;
+        default:
+            res.status(400).send({ error: '잘못된 데이터 전송' });
+            return;
+        }
+
+        const { error } = schema.validate(req.body);
+
         if(error) {
             checkPostError(res, error);
         }else {

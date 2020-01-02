@@ -21,6 +21,11 @@ module.exports = {
                 error: 'card_id 확인해주세요'
             });
             break;
+        case 'favorite_id':
+            res.status(400).send({
+                error: 'favorite_id 확인해주세요'
+            });
+            break;
         case 'title':
             res.status(400).send({
                 error: '제목을 확인해주세요'
