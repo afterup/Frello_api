@@ -7,10 +7,13 @@ const config = require('./config/config');
 const { sequelize, User, Board, Favorite, List, Card } = require('./models');
 
 const app = express();
-app.use(logger('dev'));
+
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(logger('dev'));
 app.use(cors());
+
+app.set('jwt-secret', config.authentication.jwtSecret);
 
 require('./routes/auth')(app);
 require('./routes/board')(app);

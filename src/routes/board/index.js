@@ -1,6 +1,8 @@
 const PostController = require('../../controller/PostController');
 const PostControllerPolicy = require('../../policies/PostControllerPolicy');
 
+const { verifyToken } = require('../../middleware/verifyAuth');
+
 module.exports = (app) => {
     app.get('/board/:id', 
         PostControllerPolicy.fetchPostData,
@@ -13,6 +15,7 @@ module.exports = (app) => {
     );
 
     app.post('/board', 
+        verifyToken,
         PostControllerPolicy.createPostData,
         PostController.createPostData
     );
