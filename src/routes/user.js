@@ -8,11 +8,13 @@ const auth = require('../middlewares/auth');
 router.get('/user', 
     auth.required,
     function(req, res, next) {
-        User.findById(req.payload.id).then((user) => {
-            if(!user) { return res.sendStatus(401); }
+        User.findByPk(req.payload.user_id, 
+            { attributes: ['user_id', 'email', 'username', 'createdAt'] })
+            .then((user) => {
+                if(!user) { return res.sendStatus(401); }
 
-            return res.json({ user: user.toAuthJSON() });
-        });
+                return res.json({ user: user });
+            });
     });
 
 router.post('/user',
@@ -30,19 +32,22 @@ router.post('/user',
             });
 
             if(validateDuplicate) {
-                console.log(validateDuplicate);
-                res.status(400).send({ error: { body: 'duplicate username or email' } });
-            }else {
-                user.hashPassword(req.body.user.password);
-        
-                const resultUser = await User.create(req.body.user);
-                console.log(resultUser);
-                res.status(201).json({
-                    user: user.toAuthJSON()
-                });
+                return res.status(400).send({ error: { body: 'duplicate username or email' } });
             }
+            await user.hashPassword(req.body.user.password);
+        
+            const resultUser = await User.create({
+                email: user.email,
+                username: user.username,
+                password: user.password
+            });
+
+            return res.status(201).json({
+                user: user.toAuthJSON(resultUser.user_id)
+            });
         }catch(err) {
-            res.status(400).send({ error: { body: 'register error' } });
+            console.log(err);
+            return res.status(500).send({ error: { body: 'register error' } });
         }
     }
 );
@@ -50,9 +55,22 @@ router.post('/user',
 router.put('/user',
     auth.required,
     async function(req, res) {
-        const user = await User.findById(req.payload.id);
-        if(!user) {
-            return res.status(201).send({ error: { body: 'not exist user' } }); 
+        try{
+            const user = await User.findById(req.payload.user_id);
+            if(!user) {
+                return res.status(406).send({ error: { body: 'not exist user' } }); 
+            }
+            User.update(
+                req.body.user,
+                { where: { user_id: req.payload.user_id } }
+            ).then((user) => {
+                console.log(user);
+                res.status(201).send({
+                    message: 'success'
+                });
+            });
+        }catch(err) {
+            res.status(500).send({ error: { body: 'update error' } });
         }
     }
 

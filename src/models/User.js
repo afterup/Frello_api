@@ -15,31 +15,32 @@ module.exports = (sequelize, DataTypes) => {
         return bcrypt.compare(password, this.password);
     };
 
-    User.prototype.hashPassword = async function(user) {
+    User.prototype.hashPassword = async function(password) {
         const SALT_FACTOR = 8;
     
         const genSalt = await bcrypt.genSalt(SALT_FACTOR);
-        const hash = await bcrypt.hash(user.password, genSalt);
-        user.setDataValue('password', hash);
+        const hash = await bcrypt.hash(password, genSalt);
+        console.log(hash);
+        this.setDataValue('password', hash);
     };
 
-    User.prototype.generateJWT = function() {
+    User.prototype.generateJWT = function(id) {
         const ONE_WEEK = 60 * 60 * 24 * 7;
         return jwt.sign(
             {
-                user_id: this.user_id,
-                username: this.username,
-                exp: ONE_WEEK
+                user_id: id,
+                username: this.username
             }, 
-            config.authentication.jwtSecret
+            config.authentication.jwtSecret,
+            { expiresIn: ONE_WEEK }
         );
     };
 
-    User.prototype.toAuthJSON = function() {
+    User.prototype.toAuthJSON = function(id) {
         return {
             username: this.username,
             email: this.email,
-            token: this.generateJWT()
+            token: this.generateJWT(id)
         };
     };
 
