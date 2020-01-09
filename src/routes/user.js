@@ -82,7 +82,26 @@ router.put('/user',
             res.status(500).send({ error: { body: 'update error' } });
         }
     }
-
 );
+
+router.delete('/user',
+    auth.required,
+    function(req, res, next) {
+        User.destroy({
+            where: { user_id: req.payload.user_id }
+        }).then((result) => {
+            if(result === 1) {
+                res.status(200).send({
+                    message: 'success'
+                });
+            }else {
+                res.status(406).send({
+                    error: {
+                        body: 'not exist user'
+                    }
+                });
+            }
+        });
+    });
 
 module.exports = router;
