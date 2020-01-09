@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         password: { type: DataTypes.STRING(64), allowNull: false }
     }, { timestamps: true });
     
-    User.prototype.comparePassword = function(password) {
+    User.prototype.validPassword = function(password) {
         return bcrypt.compare(password, this.password);
     };
 

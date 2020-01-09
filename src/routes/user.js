@@ -2,8 +2,9 @@ const { User } = require('../models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 const router = require('express').Router();
-const passport = require('passport');
 const auth = require('../middlewares/auth');
+const passport = require('passport');
+require('dotenv').config();
 
 router.get('/user', 
     auth.required,
@@ -61,13 +62,14 @@ router.put('/user',
                 return res.status(406).send({ error: { body: 'not exist user' } }); 
             }
 
+            const { username, email, password } = req.body.user;
             const newUser = new User();
-            await newUser.hashPassword(req.body.user.password);
+            await newUser.hashPassword(password);
 
             User.update(
                 {
-                    username: req.body.user.username,
-                    email: req.body.user.email,
+                    username: username,
+                    email: email,
                     password: newUser.password
                 },
                 { where: { user_id: req.payload.user_id } }
@@ -95,13 +97,26 @@ router.delete('/user',
                     message: 'success'
                 });
             }else {
-                res.status(406).send({
-                    error: {
-                        body: 'not exist user'
-                    }
-                });
+                res.status(406).send({ error: { body: 'not exist user' } });
             }
         });
-    });
+    }
+);
+
+router.post('/user/login', function(req, res) {
+    passport.authenticate('local', function(err, user) {
+        console.log(user);
+        if(err || !user) { return res.status(400).send({ error: { body: 'authenticate error' } }); }
+
+        req.login(user, { session: false }, (err) => {
+            if(err) {
+                res.send(err);
+            }
+        });
+        return res.status(201).json({ user: user.toAuthJSON() });
+    })(req, res);
+});
+
+
 
 module.exports = router;
