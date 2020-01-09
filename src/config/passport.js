@@ -14,7 +14,6 @@ module.exports = () => {
     },
     function (email, password, done) {
         // 이 부분에선 저장되어 있는 User를 비교하면 된다. 
-        console.log(email);
         return User.findOne({ where: { email: email } })
             .then(user => {
                 if(!user || !user.validPassword(password)) {
@@ -26,19 +25,19 @@ module.exports = () => {
     }
     ));
     
-    // JWT Strategy
-    passport.use(new JWTStrategy({
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: process.env.JWT_SECRET
-    },
-    function (jwtPayload, done) {
-        return User.findByPk(jwtPayload.id)
-            .then(user => {
-                return done(null, user);
-            })
-            .catch(err => {
-                return done(err);
-            });
-    }
-    ));
+    // // JWT Strategy
+    // passport.use(new JWTStrategy({
+    //     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    //     secretOrKey: process.env.JWT_SECRET
+    // },
+    // function (jwtPayload, done) {
+    //     return User.findByPk(jwtPayload.id)
+    //         .then(user => {
+    //             return done(null, user);
+    //         })
+    //         .catch(err => {
+    //             return done(err);
+    //         });
+    // }
+    // ));
 };

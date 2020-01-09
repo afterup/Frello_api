@@ -105,7 +105,6 @@ router.delete('/user',
 
 router.post('/user/login', function(req, res) {
     passport.authenticate('local', function(err, user) {
-        console.log(user);
         if(err || !user) { return res.status(400).send({ error: { body: 'authenticate error' } }); }
 
         req.login(user, { session: false }, (err) => {
@@ -113,7 +112,7 @@ router.post('/user/login', function(req, res) {
                 res.send(err);
             }
         });
-        return res.status(201).json({ user: user.toAuthJSON() });
+        return res.status(201).json({ user: user.toAuthJSON(user.user_id) });
     })(req, res);
 });
 
