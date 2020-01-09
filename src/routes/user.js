@@ -56,12 +56,20 @@ router.put('/user',
     auth.required,
     async function(req, res) {
         try{
-            const user = await User.findById(req.payload.user_id);
+            const user = await User.findByPk(req.payload.user_id);
             if(!user) {
                 return res.status(406).send({ error: { body: 'not exist user' } }); 
             }
+
+            const newUser = new User();
+            await newUser.hashPassword(req.body.user.password);
+
             User.update(
-                req.body.user,
+                {
+                    username: req.body.user.username,
+                    email: req.body.user.email,
+                    password: newUser.password
+                },
                 { where: { user_id: req.payload.user_id } }
             ).then((user) => {
                 console.log(user);
@@ -70,6 +78,7 @@ router.put('/user',
                 });
             });
         }catch(err) {
+            console.log(err);
             res.status(500).send({ error: { body: 'update error' } });
         }
     }
