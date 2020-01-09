@@ -1,4 +1,4 @@
-const { Board } = require('../models');
+const { Board, List, Card } = require('../models');
 const sequelize = require('sequelize');
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
@@ -30,6 +30,27 @@ router.get('/', auth.required, function(req, res) {
             });
         })
         .catch(err => {
+            res.status(500).send({ error: { body: err.message } });
+        });
+});
+
+router.get('/:id', function(req, res) {
+    Board.findOne({
+        where: { board_id: req.params.id },
+        include: [{ 
+            model: List, 
+            include: [{
+                model: Card,
+                order: [['position', 'ASC']]
+            }],
+            order: [['position', 'ASC']]
+        }]
+    })
+        .then((board) => {
+            res.status(200).send({
+                board: board
+            });
+        }).catch(err => {
             res.status(500).send({ error: { body: err.message } });
         });
 });
