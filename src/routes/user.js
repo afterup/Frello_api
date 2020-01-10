@@ -43,9 +43,7 @@ router.post('/user',
                 password: user.password
             });
 
-            return res.status(201).json({
-                user: user.toAuthJSON(resultUser.user_id)
-            });
+            return res.status(201).json(user.toAuthJSON(resultUser.user_id));
         }catch(err) {
             console.log(err);
             return res.status(500).send({ error: { message: 'register error' } });
@@ -112,7 +110,7 @@ router.post('/user/login', function(req, res) {
                 res.send(err);
             }
         });
-        return res.status(201).json({ user: user.toAuthJSON(user.user_id) });
+        return res.status(201).json(user.toAuthJSON(user.user_id));
     })(req, res);
 });
 

@@ -38,8 +38,10 @@ module.exports = (sequelize, DataTypes) => {
 
     User.prototype.toAuthJSON = function(id) {
         return {
-            username: this.username,
-            email: this.email,
+            user: {
+                username: this.username,
+                email: this.email
+            },
             token: this.generateJWT(id)
         };
     };
