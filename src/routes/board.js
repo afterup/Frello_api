@@ -65,11 +65,16 @@ router.get('/:id',
 router.put('/:id', auth.required,
     async function(req, res) {
         try{
-            if(req.body.board.user_id.toString() === req.payload.user_id.toString()) {
-                const board = await Board.findOne({ where: { board_id: req.params.id } });
-                if(!board) {
-                    return res.status(406).send({ error: { message: 'board_id not exist' } });
-                }
+            const boardUserId = await Board.findOne({
+                attributes: ['user_id'],
+                where: { board_id: req.params.id }
+            });
+
+            if(!boardUserId) {
+                return res.status(406).send({ error: { message: 'board_id not exist' } });
+            }
+
+            if(boardUserId.user_id === req.payload.user_id) {
                 await Board.update(
                     req.body.board, 
                     { where: { board_id: req.params.id } }
@@ -85,8 +90,17 @@ router.put('/:id', auth.required,
 );
 
 router.delete('/:id', auth.required,
-    function(req, res) {
-        if(req.body.user_id.toString() === req.payload.user_id.toString()) {
+    async function(req, res) {
+        const boardUserId = await Board.findOne({
+            attributes: ['user_id'],
+            where: { board_id: req.params.id }
+        });
+
+        if(!boardUserId) {
+            return res.status(406).send({ error: { message: 'board_id not exist' } });
+        }
+
+        if(boardUserId.user_id === req.payload.user_id) {
             Board.destroy({
                 where: { board_id: req.params.id }
             }).then(() => {
