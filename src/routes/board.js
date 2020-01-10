@@ -11,7 +11,7 @@ router.post('/', auth.required,
         Board.create({
             user_id: req.payload.user_id,
             title: req.body.board.title,
-            background: req.body.board.title
+            background: req.body.board.background
         }).then((result) => {
             res.status(201).send(result);
         }).catch((err) => {
