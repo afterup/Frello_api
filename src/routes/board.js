@@ -15,7 +15,7 @@ router.post('/', auth.required,
         }).then((result) => {
             res.status(201).send(result);
         }).catch((err) => {
-            res.status(500).send({ error: { body: err.message } });
+            res.status(500).send({ error: { message: err.message } });
         });
     }
 );
@@ -33,7 +33,7 @@ router.get('/', auth.required,
                 });
             })
             .catch(err => {
-                res.status(500).send({ error: { body: err.message } });
+                res.status(500).send({ error: { message: err.message } });
             });
     }
 );
@@ -56,7 +56,7 @@ router.get('/:id',
                     board: board
                 });
             }).catch(err => {
-                res.status(500).send({ error: { body: err.message } });
+                res.status(500).send({ error: { message: err.message } });
             });
     }
 );
@@ -67,7 +67,7 @@ router.put('/:id', auth.required,
             if(req.body.board.user_id.toString() === req.payload.user_id.toString()) {
                 const board = await Board.findOne({ where: { board_id: req.params.id } });
                 if(!board) {
-                    return res.status(406).send({ error: { body: 'board_id not exist' } });
+                    return res.status(406).send({ error: { message: 'board_id not exist' } });
                 }
                 await Board.update(
                     req.body.board, 
@@ -75,10 +75,10 @@ router.put('/:id', auth.required,
                 );
                 res.status(200).send({ message: 'success' });
             }else {
-                return res.status(403).send({ error: { body: 'Forbidden' } });
+                return res.status(403).send({ error: { message: 'Forbidden' } });
             }
         }catch(err) {
-            res.status(500).send({ error: { body: err.message } });
+            res.status(500).send({ error: { message: err.message } });
         }
     }
 );
@@ -92,7 +92,7 @@ router.delete('/:id', auth.required,
                 res.status(200).send({ message: 'success' });
             });
         }else{
-            res.status(403).send({ error: { body: 'Forbidden' } });
+            res.status(403).send({ error: { message: 'Forbidden' } });
         }
     }
 );

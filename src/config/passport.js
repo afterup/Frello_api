@@ -17,7 +17,7 @@ module.exports = () => {
         return User.findOne({ where: { email: email } })
             .then(user => {
                 if(!user || !user.validPassword(password)) {
-                    return done(null, false, { error: { body: ' email or password is invalid' } });
+                    return done(null, false, { error: { message: ' email or password is invalid' } });
                 }
                 return done(null, user);
             })

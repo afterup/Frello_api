@@ -33,7 +33,7 @@ router.post('/user',
             });
 
             if(validateDuplicate) {
-                return res.status(400).send({ error: { body: 'duplicate username or email' } });
+                return res.status(400).send({ error: { message: 'duplicate username or email' } });
             }
             await user.hashPassword(req.body.user.password);
         
@@ -48,7 +48,7 @@ router.post('/user',
             });
         }catch(err) {
             console.log(err);
-            return res.status(500).send({ error: { body: 'register error' } });
+            return res.status(500).send({ error: { message: 'register error' } });
         }
     }
 );
@@ -59,7 +59,7 @@ router.put('/user',
         try{
             const user = await User.findByPk(req.payload.user_id);
             if(!user) {
-                return res.status(406).send({ error: { body: 'not exist user' } }); 
+                return res.status(406).send({ error: { message: 'not exist user' } }); 
             }
 
             const { username, email, password } = req.body.user;
@@ -81,7 +81,7 @@ router.put('/user',
             });
         }catch(err) {
             console.log(err);
-            res.status(500).send({ error: { body: 'update error' } });
+            res.status(500).send({ error: { message: 'update error' } });
         }
     }
 );
@@ -97,7 +97,7 @@ router.delete('/user',
                     message: 'success'
                 });
             }else {
-                res.status(406).send({ error: { body: 'not exist user' } });
+                res.status(406).send({ error: { message: 'not exist user' } });
             }
         });
     }
@@ -105,7 +105,7 @@ router.delete('/user',
 
 router.post('/user/login', function(req, res) {
     passport.authenticate('local', function(err, user) {
-        if(err || !user) { return res.status(400).send({ error: { body: 'authenticate error' } }); }
+        if(err || !user) { return res.status(400).send({ error: { message: 'authenticate error' } }); }
 
         req.login(user, { session: false }, (err) => {
             if(err) {
