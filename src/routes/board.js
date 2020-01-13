@@ -14,7 +14,7 @@ router.post('/', auth.required,
             title: req.body.board.title,
             background: req.body.board.background
         }).then((result) => {
-            res.status(201).send(result);
+            res.status(201).send({ board: result });
         }).catch((err) => {
             res.status(500).send({ error: { message: err.message } });
         });

@@ -24,7 +24,7 @@ router.post('/', auth.required,
                 description: reqCard.description,
                 position: reqCard.position
             });
-            res.status(201).send(result);
+            res.status(201).send({ card: result });
         }catch(err) {
             res.status(500).send({ error: { message: err.message } });
         };

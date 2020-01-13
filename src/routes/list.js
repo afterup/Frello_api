@@ -15,7 +15,7 @@ router.post('/', auth.required,
             title: reqList.title,
             position: reqList.position
         }).then((result) => {
-            res.status(201).send(result);
+            res.status(201).send({ list: result });
         }).catch(err => {
             res.status(500).send({ error: { message: err.message } });
         });
