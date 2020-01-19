@@ -1,6 +1,7 @@
 const { Board, List, Card, Favorite } = require('../models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
+const { QueryTypes } = require('sequelize');
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
 
@@ -40,17 +41,36 @@ router.get('/', auth.required,
 );
 
 router.get('/:id', 
-    function(req, res) {
+    async function(req, res) {
+        // const query = `
+        // SELECT b.board_id, b.user_id, b.title, b.background, b.createdAt, b.updatedAt, l.title, c.description, c.updatedAt FROM boards AS b 
+        // JOIN lists AS l 
+        // ON l.board_id = b.board_id
+        // JOIN cards AS c
+        // ON l.list_id = c.list_id
+        // WHERE b.board_id= :board_id;
+        // `;
+
+        // const board = await Board.sequelize.query(
+        //     query,
+        //     {
+        //         replacements: { board_id: req.params.id },
+        //         type: QueryTypes.SELECT
+        //     });
+        // console.log(board);
+
         Board.findOne({
             where: { board_id: req.params.id },
             include: [{ 
                 model: List, 
                 include: [{
-                    model: Card,
-                    order: [['position', 'ASC']]
+                    model: Card
                 }],
-                order: [['position', 'ASC']]
-            }]
+                order: [[Card, 'position', 'ASC']]
+            }],
+            order: [
+                [List, 'position', 'ASC']
+            ]
         })
             .then((board) => {
                 res.status(200).send({

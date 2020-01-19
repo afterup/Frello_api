@@ -72,10 +72,10 @@ router.put('/:id', auth.required,
                             // 두 포지션 사이의 난수 생성
                             position = Math.floor(Math.random() * (rightListPosition - leftListPosition)) + leftListPosition;
                         }else {
-                            position = leftListPosition + Math.floor(Math.random() * 1000);
+                            position = leftListPosition + Math.floor(Math.random() * 5000);
                         }
                     }else {
-                        position = rightListPosition - Math.floor(Math.random() * 1000);
+                        position = rightListPosition - Math.floor(Math.random() * 5000);
                     }
 
                     await List.update(
