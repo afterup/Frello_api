@@ -42,23 +42,6 @@ router.get('/', auth.required,
 
 router.get('/:id', 
     async function(req, res) {
-        // const query = `
-        // SELECT b.board_id, b.user_id, b.title, b.background, b.createdAt, b.updatedAt, l.title, c.description, c.updatedAt FROM boards AS b 
-        // JOIN lists AS l 
-        // ON l.board_id = b.board_id
-        // JOIN cards AS c
-        // ON l.list_id = c.list_id
-        // WHERE b.board_id= :board_id;
-        // `;
-
-        // const board = await Board.sequelize.query(
-        //     query,
-        //     {
-        //         replacements: { board_id: req.params.id },
-        //         type: QueryTypes.SELECT
-        //     });
-        // console.log(board);
-
         Board.findOne({
             where: { board_id: req.params.id },
             include: [{ 
@@ -128,6 +111,27 @@ router.delete('/:id', auth.required,
             });
         }else{
             res.status(403).send({ error: { message: 'Forbidden' } });
+        }
+    }
+);
+
+router.put('/:id/favorite', auth.required,
+    async function(req, res) {
+        try{
+            const board = await Board.findOne({ where: { board_id: req.params.id } });
+            if(!board) {
+                return res.status(403).send({ error: { message: 'Not Found Board' } });
+            }
+
+            console.log(req.body.favorite);
+
+            const favorite = await Board.update(
+                req.body,
+                { where: { board_id: req.params.id } }
+            );
+            res.status(200).send({ message: 'success' });
+        }catch(err) {
+            res.status(500).send({ error: { message: err.message } });
         }
     }
 );

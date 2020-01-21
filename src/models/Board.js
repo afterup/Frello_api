@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(20),
             allowNull: false,
             required: false
+        },
+        favorite: {
+            type: DataTypes.BOOLEAN,
+            required: false
         }
     }, { timestamps: true });
 

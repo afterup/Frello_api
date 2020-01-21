@@ -10,11 +10,7 @@ router.get('/', auth.required,
     async function(req, res) {
         try{
             const favorite = await Favorite.findAll({
-                where: { user_id: req.payload.user_id },
-                includes: [{
-                    model: Board,
-                    order: [['updatedAt', 'ASC']]
-                }]
+                where: { user_id: req.payload.user_id }
             });
             res.status(201).send({ favorite: favorite });
         }catch(err) {

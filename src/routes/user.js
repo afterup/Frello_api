@@ -23,24 +23,21 @@ router.post('/user',
         try{
             const user = new User();
             
-            user.username = req.body.user.username;
-            user.email = req.body.user.email;
+            const { username, email, password } = req.body.user;
 
             const validateDuplicate = await User.findOne({
                 where: {
-                    [Op.or]: [{ email: user.email }, { username: user.username }]
+                    [Op.or]: [{ email: email }, { username: username }]
                 }
             });
 
             if(validateDuplicate) {
                 return res.status(400).send({ error: { message: 'duplicate username or email' } });
             }
-            await user.hashPassword(req.body.user.password);
+            await user.hashPassword(password);
         
             const resultUser = await User.create({
-                email: user.email,
-                username: user.username,
-                password: user.password
+                email, username, password
             });
 
             return res.status(201).json(user.toAuthJSON(resultUser.user_id));
