@@ -5,136 +5,123 @@ const { QueryTypes } = require('sequelize');
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
 
-// routes '/board' 
+// routes '/board'
 
-router.post('/', auth.required, 
-    function(req, res, next) {
-        console.log(req.payload);
-        Board.create({
-            user_id: req.payload.user_id,
-            title: req.body.board.title,
-            background: req.body.board.background
-        }).then((result) => {
-            res.status(201).send({ board: result });
-        }).catch((err) => {
-            res.status(500).send({ error: { message: err.message } });
-        });
-    }
-);
+router.post('/', auth.required, function(req, res) {
+	const { title, background } = req.body.board;
 
-router.get('/', auth.required, 
-    function(req, res) {
-        console.log(req.payload);
-        Board.findAll({ 
-            where: { user_id: req.payload.user_id },
-            order: [['updatedAt', 'DESC']]
-        })
-            .then((boards) => {
-                res.status(200).send({
-                    boards: boards
-                });
-            })
-            .catch(err => {
-                res.status(500).send({ error: { message: err.message } });
-            });
-    }
-);
+	Board.create({
+		user_id: req.payload.user_id,
+		title,
+		background,
+	})
+		.then(result => {
+			res.status(201).send({ board: result });
+		})
+		.catch(err => {
+			res.status(500).send({ error: { message: err.message } });
+		});
+});
 
-router.get('/:id', 
-    async function(req, res) {
-        Board.findOne({
-            where: { board_id: req.params.id },
-            include: [{ 
-                model: List, 
-                include: [{
-                    model: Card
-                }],
-                order: [[Card, 'position', 'ASC']]
-            }],
-            order: [
-                [List, 'position', 'ASC']
-            ]
-        })
-            .then((board) => {
-                res.status(200).send({
-                    board: board
-                });
-            }).catch(err => {
-                res.status(500).send({ error: { message: err.message } });
-            });
-    }
-);
+router.get('/', auth.required, function(req, res) {
+	console.log(req.payload);
+	Board.findAll({
+		where: { user_id: req.payload.user_id },
+		order: [['updatedAt', 'DESC']],
+	})
+		.then(boards => {
+			res.status(200).send({
+				boards: boards,
+			});
+		})
+		.catch(err => {
+			res.status(500).send({ error: { message: err.message } });
+		});
+});
 
-router.put('/:id', auth.required,
-    async function(req, res) {
-        try{
-            const boardUserId = await Board.findOne({
-                attributes: ['user_id'],
-                where: { board_id: req.params.id }
-            });
+router.get('/:id', async function(req, res) {
+	Board.findOne({
+		where: { board_id: req.params.id },
+		include: [
+			{
+				model: List,
+				include: [
+					{
+						model: Card,
+					},
+				],
+				order: [[Card, 'position', 'ASC']],
+			},
+		],
+		order: [[List, 'position', 'ASC']],
+	})
+		.then(board => {
+			res.status(200).send({
+				board: board,
+			});
+		})
+		.catch(err => {
+			res.status(500).send({ error: { message: err.message } });
+		});
+});
 
-            if(!boardUserId) {
-                return res.status(406).send({ error: { message: 'board_id not exist' } });
-            }
+router.put('/:id', auth.required, async function(req, res) {
+	try {
+		const boardUserId = await Board.findOne({
+			attributes: ['user_id'],
+			where: { board_id: req.params.id },
+		});
 
-            if(boardUserId.user_id === req.payload.user_id) {
-                await Board.update(
-                    req.body.board, 
-                    { where: { board_id: req.params.id } }
-                );
-                res.status(200).send({ message: 'success' });
-            }else {
-                return res.status(403).send({ error: { message: 'Forbidden' } });
-            }
-        }catch(err) {
-            res.status(500).send({ error: { message: err.message } });
-        }
-    }
-);
+		if (!boardUserId) {
+			return res.status(406).send({ error: { message: 'board_id not exist' } });
+		}
 
-router.delete('/:id', auth.required,
-    async function(req, res) {
-        const boardUserId = await Board.findOne({
-            attributes: ['user_id'],
-            where: { board_id: req.params.id }
-        });
+		if (boardUserId.user_id === req.payload.user_id) {
+			await Board.update(req.body.board, { where: { board_id: req.params.id } });
+			res.status(200).send({ message: 'success' });
+		} else {
+			return res.status(403).send({ error: { message: 'Forbidden' } });
+		}
+	} catch (err) {
+		res.status(500).send({ error: { message: err.message } });
+	}
+});
 
-        if(!boardUserId) {
-            return res.status(406).send({ error: { message: 'board_id not exist' } });
-        }
+router.delete('/:id', auth.required, async function(req, res) {
+	const boardUserId = await Board.findOne({
+		attributes: ['user_id'],
+		where: { board_id: req.params.id },
+	});
 
-        if(boardUserId.user_id === req.payload.user_id) {
-            Board.destroy({
-                where: { board_id: req.params.id }
-            }).then(() => {
-                res.status(200).send({ message: 'success' });
-            });
-        }else{
-            res.status(403).send({ error: { message: 'Forbidden' } });
-        }
-    }
-);
+	if (!boardUserId) {
+		return res.status(406).send({ error: { message: 'board_id not exist' } });
+	}
 
-router.put('/:id/favorite', auth.required,
-    async function(req, res) {
-        try{
-            const board = await Board.findOne({ where: { board_id: req.params.id } });
-            if(!board) {
-                return res.status(403).send({ error: { message: 'Not Found Board' } });
-            }
+	if (boardUserId.user_id === req.payload.user_id) {
+		Board.destroy({
+			where: { board_id: req.params.id },
+		}).then(() => {
+			res.status(200).send({ message: 'success' });
+		});
+	} else {
+		res.status(403).send({ error: { message: 'Forbidden' } });
+	}
+});
 
-            console.log(req.body.favorite);
+router.put('/:id/favorite', auth.required, async function(req, res) {
+	try {
+		const board = await Board.findOne({ where: { board_id: req.params.id } });
+		if (!board) {
+			return res.status(403).send({ error: { message: 'Not Found Board' } });
+		}
 
-            const favorite = await Board.update(
-                req.body,
-                { where: { board_id: req.params.id } }
-            );
-            res.status(200).send({ message: 'success' });
-        }catch(err) {
-            res.status(500).send({ error: { message: err.message } });
-        }
-    }
-);
+		console.log(req.body.favorite);
 
+		const favorite = await Board.update(req.body, { where: { board_id: req.params.id } });
+		res.status(200).send({ message: 'success' });
+	} catch (err) {
+		res.status(500).send({ error: { message: err.message } });
+	}
+});
 
 module.exports = router;
