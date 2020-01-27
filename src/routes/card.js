@@ -6,28 +6,39 @@ const auth = require('../middlewares/auth');
 
 router.post('/', auth.required, 
     async function(req, res) {
-        try{
-            const reqCard = req.body.card;
+        /* eslint-disable camelcase */
+        console.log(req.body.card);
+        const { list_id, title } = req.body.card;
+        let position;
 
-            const list = await List.findOne({
-                where: { list_id: reqCard.list_id }
-            });
+        const maximumPosition = await Card.findOne({
+            limit: 1,
+            where: {
+                list_id: list_id
+            },
+            order: [['position', 'desc']]
+        });
 
-            if(!list) {
-                return res.status(403).send({ error: { message: 'Not found list' } });
-            }
+        console.log(maximumPosition);
 
-            const result = await Card.create({
-                user_id: req.payload.user_id,
-                list_id: reqCard.list_id,
-                title: reqCard.title,
-                description: reqCard.description,
-                position: reqCard.position
-            });
+        if(maximumPosition) {
+            position = maximumPosition.position + 65535;
+        }else {
+            position = 65535;
+        }
+
+        console.log(position);
+
+        Card.create({
+            user_id: req.payload.user_id,
+            list_id: list_id,
+            title: title,
+            position: position
+        }).then((result) => {
             res.status(201).send({ card: result });
-        }catch(err) {
+        }).catch(err => {
             res.status(500).send({ error: { message: err.message } });
-        };
+        });
     }
 );
 
@@ -58,11 +69,36 @@ router.put('/:id', auth.required,
                 return res.status(406).send({ error: { message: 'card_id not exist' } });
             }
 
+            const { title, description, bothCard, type } = req.body.card;
+
             if(cardUserId.user_id === req.payload.user_id) {
-                await Card.update(
-                    req.body.card, 
-                    { where: { card_id: req.params.id } }
-                );
+                if(title || description) {
+                    await Card.update(
+                        req.body.card, 
+                        { where: { card_id: req.params.id } }
+                    );
+                }else {
+                    if(type === 'moved') {
+                        const { leftCardPosition, rightCardPosition } = bothCard;
+                        let position;
+    
+                        if(leftCardPosition) {
+                            if(rightCardPosition) {
+                                // 두 포지션 사이의 난수 생성
+                                position = Math.floor(Math.random() * (rightCardPosition - leftCardPosition)) + leftCardPosition;
+                            }else {
+                                position = leftCardPosition + Math.floor(Math.random() * 5000);
+                            }
+                        }else {
+                            position = rightCardPosition - Math.floor(Math.random() * 5000);
+                        }
+    
+                        await Card.update({ position }, { where: { card_id: req.params.id } });
+                    }else { // add, remove
+                        
+                        
+                    }
+                }
                 res.status(200).send({ message: 'success' });
             }else {
                 return res.status(403).send({ error: { message: 'Forbidden' } });
