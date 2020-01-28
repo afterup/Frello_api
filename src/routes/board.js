@@ -40,29 +40,28 @@ router.get('/', auth.required, function(req, res) {
 });
 
 router.get('/:id', async function(req, res) {
-	Board.findOne({
-		where: { board_id: req.params.id },
-		include: [
-			{
-				model: List,
-				include: [
-					{
-						model: Card,
-					},
-				],
-				order: [[Card, 'position', 'ASC']],
-			},
-		],
-		order: [[List, 'position', 'ASC']],
-	})
-		.then(board => {
-			res.status(200).send({
-				board: board,
-			});
-		})
-		.catch(err => {
-			res.status(500).send({ error: { message: err.message } });
-		});
+    Board.findOne({
+        where: { board_id: req.params.id },
+        include: [
+            {
+                model: List,
+                include: [
+                    {
+                        model: Card
+                    }
+                ]
+            }
+        ],
+        order: [[List, 'position', 'ASC'], [List, Card, 'position', 'ASC']]
+    })
+        .then(board => {
+            res.status(200).send({
+                board: board
+            });
+        })
+        .catch(err => {
+            res.status(500).send({ error: { message: err.message } });
+        });
 });
 
 router.put('/:id', auth.required, async function(req, res) {
