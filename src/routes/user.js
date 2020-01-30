@@ -12,8 +12,8 @@ require('dotenv').config();
 router.get('/user', 
     auth.required,
     function(req, res, next) {
-        User.findByPk(req.payload.user_id, 
-            { attributes: ['user_id', 'email', 'username', 'createdAt'] })
+        User.findByPk(req.user.user_id, 
+            { attributes: ['user_id', 'email', 'username'] })
             .then((user) => {
                 if(!user) { return res.sendStatus(401); }
 
