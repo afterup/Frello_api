@@ -1,27 +1,21 @@
 const jwt = require('jsonwebtoken');
+const { User } = require('../models');
+const passport = require('passport');
 
 exports.required = (req, res, next) => {
-    try{
-        let token;
-        if(req.query.authorization) {
-            token = req.query.authorization.replace(/^Bearer\s/, '');
-        }else {
-            token = req.headers.authorization.replace(/^Bearer\s/, '');
-        }
-        req.payload = jwt.verify(token, process.env.JWT_SECRET);
-        return next();
-    }catch(error) {
-        if(error.name === 'TokenExpiredError') { // 유효시간 초과
-            return res.status(401).json({
-                error: {
-                    body: '토큰이 만료되었습니다'
-                }
+    passport.authenticate('jwt', { session: false }, async (error, token) => {
+        console.log('tokenuser', token);
+        if (error || !token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        } 
+        try {
+            const user = await User.findOne({
+                where: { user_id: token.user_id }
             });
+            req.user = user;
+        } catch (error) {
+            next(error);
         }
-        return res.status(401).json({
-            error: {
-                body: '유효하지 않은 토큰입니다.'
-            }
-        });
-    }
+        next();
+    })(req, res, next);
 };

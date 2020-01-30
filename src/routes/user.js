@@ -1,9 +1,12 @@
 const { User } = require('../models');
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
+
 const passport = require('passport');
+const bcrypt = require('bcryptjs');
+
 require('dotenv').config();
 
 router.get('/user', 
@@ -21,26 +24,24 @@ router.get('/user',
 router.post('/user',
     async function(req, res) {
         try{
-            const user = new User();
-            
             const { username, email, password } = req.body.user;
+            const userObject = new User();
 
             const validateDuplicate = await User.findOne({
-                where: {
-                    [Op.or]: [{ email: email }, { username: username }]
-                }
+                where: { [Op.or]: [{ email }, { username }] }
             });
 
             if(validateDuplicate) {
                 return res.status(400).send({ error: { message: 'duplicate username or email' } });
             }
-            await user.hashPassword(password);
+            await userObject.hashPassword(password);
+            console.log(userObject.password);
         
             const resultUser = await User.create({
-                email, username, password
+                email, username, password: userObject.password
             });
 
-            return res.status(201).json(user.toAuthJSON(resultUser.user_id));
+            return res.status(201).json({ message: 'success' });
         }catch(err) {
             console.log(err);
             return res.status(500).send({ error: { message: 'register error' } });

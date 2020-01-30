@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
 const passport = require('passport');
-const passportConfig = require('./config/passport');
+const passportConfig = require('./passport/passport');
 
 // Create global app object
 const app = express();
@@ -16,7 +17,7 @@ app.use(passport.initialize());
 passportConfig();
 
 const config = require('./config/config');
-const { sequelize, User, Board, Favorite, List, Card } = require('./models');
+const { sequelize } = require('./models');
 
 app.use(require('./routes/index'));
 
