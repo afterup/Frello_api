@@ -100,15 +100,23 @@ router.delete('/user',
 );
 
 router.post('/user/login', function(req, res) {
-    passport.authenticate('local', function(err, user) {
-        if(err || !user) { return res.status(400).send({ error: { message: 'authenticate error' } }); }
+    passport.authenticate('local', { session: false }, (err, user) => {
+        if(err || !user) { return res.status(400).send({ error: { message: 'authenticate error', user } }); }
 
         req.login(user, { session: false }, (err) => {
             if(err) {
                 res.send(err);
             }
+
+            const userObject = new User();
+
+            userObject.username = user.username;
+            userObject.email = user.email;
+
+            const loginUser = userObject.toAuthJSON(user.user_id);
+            console.log(loginUser);
+            return res.status(201).json({ user: loginUser });
         });
-        return res.status(201).json(user.toAuthJSON(user.user_id));
     })(req, res);
 });
 
