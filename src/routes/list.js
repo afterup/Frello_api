@@ -1,99 +1,99 @@
 const { List } = require('../models');
 const router = require('express').Router();
 const sequelize = require('sequelize');
-const Op = sequelize.Op;
 const auth = require('../middlewares/auth');
 
 // routes '/list'
 
+async function checkList(listId) {
+    const listUserId = await List.findOne({
+        attributes: ['user_id'],
+        where: { list_id: listId }
+    });
+    return listUserId;
+}
+
 router.post('/', auth.required,
     async function(req, res) {
-        /* eslint-disable camelcase */
-        const { board_id, title } = req.body.list;
-        let position;
+        async function setPosition(boardId) {
+            let position;
+            const largestPosition = await List.findOne({
+                limit: 1,
+                where: { board_id: boardId },
+                order: [['position', 'desc']]
+            });
+            largestPosition ? position = largestPosition.position + 65535 : position = 65535;
 
-        const maximumPosition = await List.findOne({
-            limit: 1,
-            where: {
-                board_id: board_id
-            },
-            order: [['position', 'desc']]
-        });
-
-        console.log(maximumPosition);
-
-        if(maximumPosition) {
-            position = maximumPosition.position + 65535;
-        }else {
-            position = 65535;
+            return position;
         }
 
-        console.log(position);
+        try{
+            /* eslint-disable camelcase */
+            const { board_id, title } = req.body.list;
+            const { user_id } = req.user;
 
-        List.create({
-            user_id: req.payload.user_id,
-            board_id: board_id,
-            title: title,
-            position: position
-        }).then((result) => {
-            res.status(201).send({ list: result });
-        }).catch(err => {
-            res.status(500).send({ error: { message: err.message } });
-        });
+            const position = await setPosition(board_id);
+            console.log(position);
+            
+            const list = await List.create({ user_id, board_id, title, position });
+            return res.status(201).send({ list: list }); 
+        }catch(err) {
+            return res.status(500).send({ error: { message: err.message } });
+        }
     }
 );
 
+
+
 router.put('/:id', auth.required,
     async function(req, res) {
-        try{
-            const listUserId = await List.findOne({
-                attributes: ['user_id'],
-                where: { list_id: req.params.id }
-            });
-
-            if(!listUserId) {
-                return res.status(406).send({ error: { message: 'list_id not exist' } });
+        function bothPosition(bothItem) {
+            const { leftPosition, rightPosition } = bothItem;
+            let position;
+        
+            if(leftPosition) {
+                if(rightPosition) {
+                    // 두 포지션 사이의 난수 생성
+                    position = Math.floor(Math.random() * (rightPosition - leftPosition)) + leftPosition;
+                }else {
+                    position = leftPosition + Math.floor(Math.random() * 5000);
+                }
+            }else {
+                position = rightPosition - Math.floor(Math.random() * 5000);
             }
+            return position;
+        }
 
-            const { title, bothList } = req.body.list;
+        try{
+            const { title, bothItem } = req.body.list;
 
-            if(listUserId.user_id === req.payload.user_id) {
-                if(title) {
+            const listUserId = await checkList(req.params.id);
+            if(!listUserId) return res.status(406).send({ error: { message: 'list_id not exist' } });
+
+            if(listUserId.user_id === req.user.user_id) {
+                if(title) { // update title
                     await List.update(
                         { title },
                         { where: { list_id: req.params.id } }
                     );
-                }else if(bothList) {
-                    const { leftListPosition, rightListPosition } = bothList;
-                    let position;
+                }else if(bothItem) { // move list
+                    const position = bothPosition(bothItem);
 
-                    if(leftListPosition) {
-                        if(rightListPosition) {
-                            // 두 포지션 사이의 난수 생성
-                            position = Math.floor(Math.random() * (rightListPosition - leftListPosition)) + leftListPosition;
-                        }else {
-                            position = leftListPosition + Math.floor(Math.random() * 5000);
-                        }
-                    }else {
-                        position = rightListPosition - Math.floor(Math.random() * 5000);
-                    }
-
+                    await List.findOne({ where: { position } });
                     await List.update(
                         { position },
                         { where: { list_id: req.params.id } }
-                    );
+                    ); 
                 }
 
-                const list = await List.findOne({
-                    where: { list_id: req.params.id }
-                });
+                const list = await List.findOne({ where: { list_id: req.params.id } });
 
                 return res.status(200).send({ message: 'success', list: list });
             }else {
                 return res.status(403).send({ error: { message: 'Forbidden' } });
             }
         }catch(err) {
-            res.status(500).send({ error: { message: err.message } });
+            return res.status(500).send({ error: { message: err.message } });
         }
     }
 );
@@ -101,31 +101,21 @@ router.put('/:id', auth.required,
 router.delete('/:id', auth.required,
     async function(req, res) {
         try{
-            const listUserId = await List.findOne({
-                attributes: ['user_id'],
-                where: { list_id: req.params.id }
-            });
-
-            if(!listUserId) {
-                return res.status(406).send({ error: { message: 'list_id not exist' } });
-            }
+            const listUserId = await checkList(req.params.id);
+            if(!listUserId) { return res.status(406).send({ error: { message: 'list_id not exist' } }); }
     
-            if(listUserId.user_id === req.payload.user_id) {
-                List.destroy({
+            if(listUserId.user_id === req.user.user_id) {
+                await List.destroy({
                     where: { list_id: req.params.id }
-                }).then(() => {
-                    res.status(200).send({ message: 'success' });
                 });
+                return res.status(200).send({ message: 'success' });
             }else {
-                res.status(403).send({ error: { message: 'Forbidden' } });
+                return res.status(403).send({ error: { message: 'Forbidden' } });
             }
         }catch(err) {
-            res.status(500).send({ error: { message: err.message } });
+            return res.status(500).send({ error: { message: err.message } });
         }
     }
 );
-
-
-
 
 module.exports = router;
