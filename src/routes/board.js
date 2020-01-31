@@ -40,7 +40,10 @@ router.get('/:id', async function(req, res) {
     try{
         const board = await Board.findOne({
             where: { board_id: req.params.id },
-            include: [{ model: List, include: [{ model: Card }] }],
+            include: [{
+                model: List, 
+                include: [{ model: Card, attributes: ['card_id', 'position', 'list_id', 'title', 'updatedAt', 'user_id'] }] 
+            }],
             order: [[List, 'position', 'ASC'], [List, Card, 'position', 'ASC']]
         });
     
