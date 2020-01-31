@@ -36,6 +36,8 @@ router.post('/', auth.required,
             console.log(position);
             
             const list = await List.create({ user_id, board_id, title, position });
+            list.dataValues.Cards = [];
+
             return res.status(201).send({ list: list }); 
         }catch(err) {
             return res.status(500).send({ error: { message: err.message } });
