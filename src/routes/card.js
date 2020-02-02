@@ -1,6 +1,7 @@
 const { Card, List } = require('../models');
 const router = require('express').Router();
 const { sequelize } = require('../models');
+const Op = sequelize.Op;
 const auth = require('../middlewares/auth');
 
 // routes '/card' 
@@ -56,7 +57,7 @@ router.get('/:id',
 router.put('/:id', auth.required,
     async function(req, res) {
         console.log(req.body.card);
-        const { title, description, bothItem } = req.body.card;
+        const { title, description, bothPosition, listId } = req.body.card;
 
         function findCard() {
             return Card.findOne({ where: { card_id: req.params.id } });
@@ -66,46 +67,53 @@ router.put('/:id', auth.required,
             return Card.update(property, { where: { card_id: req.params.id } });
         }
 
-        function bothPosition(bothItem) {
-            const { leftPosition, rightPosition } = bothItem;
+        async function findPosition({ bothPosition, listId }) {
+            const { leftPosition, rightPosition } = bothPosition;
             let position;
-        
+
             if(leftPosition) {
                 if(rightPosition) {
-                    // 두 포지션 사이의 난수 생성
-                    position = Math.floor(Math.random() * (rightPosition - leftPosition)) + leftPosition;
+                    position = Math.floor(Math.random() * (rightPosition - leftPosition + 1) + leftPosition);
                 }else {
                     position = leftPosition + Math.floor(Math.random() * 5000);
                 }
             }else {
                 position = rightPosition - Math.floor(Math.random() * 5000);
             }
+            const duplicatePosition = await Card.findOne({ 
+                where: { [Op.and]: [{ list_id: listId }, { position }] },
+                order: [['position', 'desc']]
+            });
+
+            if(duplicatePosition) position += (duplicatePosition.dataValues.position + 0.1);
+            
             return position;
         }
 
         try{
             const { user_id } = await findCard();
             if(!user_id) return res.status(406).send({ error: { message: 'card_id not exist' } });
-    
+            
             if(user_id === req.user.user_id) {
-                if(title || description) { // update title, description
+                if(title || description) { 
+                    // update title, description
                     await updateCard(req.body.card);
-                }else if(bothItem) { // move card
-                    const { listId } = req.body.card;
-                    const position = bothPosition(req.body.card.bothItem);
-                    await updateCard({ 
-                        position: position, 
-                        list_id: listId 
-                    });
+                }else{ 
+                    // move card
+                    let position;
+
+                    if(bothPosition) position = await findPosition({ bothPosition, listId });
+                    else position = 65535;
+                    console.log(position);
+                    await updateCard({ position, list_id: listId });
                 }
-    
                 const card = await findCard();
                 return res.status(200).send({ message: 'success', card });
             }else {
                 return res.status(403).send({ error: { message: 'Forbidden' } });
             }
         }catch(err) {
-            res.status(500).send({ error: { message: err.message } });
+            return res.status(500).send({ error: { message: err.message } });
         }
     }
 );
