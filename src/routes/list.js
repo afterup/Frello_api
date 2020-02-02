@@ -1,6 +1,7 @@
 const { List } = require('../models');
 const router = require('express').Router();
 const sequelize = require('sequelize');
+const Op = sequelize.Op;
 const auth = require('../middlewares/auth');
 
 // routes '/list'
@@ -49,43 +50,50 @@ router.post('/', auth.required,
 
 router.put('/:id', auth.required,
     async function(req, res) {
-        function bothPosition(bothItem) {
-            const { leftPosition, rightPosition } = bothItem;
+        function updateList(property) {
+            return List.update(property, { where: { list_id: req.params.id } });
+        }
+
+        async function findPosition({ bothPosition, listId }) {
+            console.log(bothPosition);
+            const { leftPosition, rightPosition } = bothPosition;
             let position;
         
             if(leftPosition) {
                 if(rightPosition) {
-                    // 두 포지션 사이의 난수 생성
-                    position = Math.floor(Math.random() * (rightPosition - leftPosition)) + leftPosition;
+                    position = Math.floor(Math.random() * (rightPosition - leftPosition) + leftPosition);
                 }else {
                     position = leftPosition + Math.floor(Math.random() * 5000);
                 }
             }else {
                 position = rightPosition - Math.floor(Math.random() * 5000);
             }
+
+            const duplicatePosition = await List.findOne({ 
+                where: { [Op.and]: [{ list_id: listId }, { position }] },
+                order: [['position', 'desc']]
+            });
+            if(duplicatePosition) position = (duplicatePosition.dataValues.position + 0.1);
+            
+            console.log(position);
             return position;
         }
 
         try{
-            const { title, bothItem } = req.body.list;
+            const { title, bothPosition } = req.body.list;
 
             const listUserId = await checkList(req.params.id);
             if(!listUserId) return res.status(406).send({ error: { message: 'list_id not exist' } });
 
             if(listUserId.user_id === req.user.user_id) {
-                if(title) { // update title
-                    await List.update(
-                        { title },
-                        { where: { list_id: req.params.id } }
-                    );
-                }else if(bothItem) { // move list
-                    const position = bothPosition(bothItem);
-
-                    await List.findOne({ where: { position } });
-                    await List.update(
-                        { position },
-                        { where: { list_id: req.params.id } }
-                    ); 
+                if(title) { 
+                    // update title
+                    await updateList({ title });
+                }else if(bothPosition) {
+                    // move list
+                    const position = await findPosition({ bothPosition, listId: req.params.id });
+                    console.log(position);
+                    await updateList({ position });
                 }
 
                 const list = await List.findOne({ where: { list_id: req.params.id } });
