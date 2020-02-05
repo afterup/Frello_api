@@ -22,6 +22,7 @@ module.exports = () => {
             .then(user => {
                 userObject.password = user.password;
                 if (!user || !userObject.validPassword(password)) {
+                if (!user || userObject.validPassword(password)) {
                     return done(null, false, { message: 'Incorrect email or password.' });
                 }
                 return done(null, user);
