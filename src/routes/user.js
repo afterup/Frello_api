@@ -5,7 +5,6 @@ const router = require('express').Router();
 const auth = require('../middlewares/auth');
 
 const passport = require('passport');
-const bcrypt = require('bcryptjs');
 
 require('dotenv').config();
 
@@ -19,7 +18,8 @@ router.get('/user',
 
                 return res.json({ user: user });
             });
-    });
+    }
+);
 
 router.post('/user',
     async function(req, res) {
@@ -100,21 +100,19 @@ router.delete('/user',
 );
 
 router.post('/user/login', function(req, res) {
-    passport.authenticate('local', { session: false }, (err, user) => {
-        if(err || !user) { return res.status(400).send({ error: { message: 'authenticate error', user } }); }
+    passport.authenticate('local', { session: false }, (err, user, info) => {
+        if(err || !user) { return res.status(400).send({ error: { message: info.message, user } }); }
 
         req.login(user, { session: false }, (err) => {
-            if(err) {
-                res.send(err);
-            }
+            if(err) { res.send(err); }
 
+            /* eslint-disable camelcase */
             const userObject = new User();
-
-            userObject.username = user.username;
-            userObject.email = user.email;
-
-            const loginUser = userObject.toAuthJSON(user.user_id);
-            console.log(loginUser);
+            const { user_id, username, email } = user;
+            userObject.username = username;
+            userObject.email = email;
+            
+            const loginUser = userObject.toAuthJSON(user_id);
             return res.status(201).json({ user: loginUser });
         });
     })(req, res);

@@ -17,15 +17,19 @@ module.exports = () => {
     },
     function (email, password, done) {
         const userObject = new User();
-  
+        
         User.findOne({ where: { email } })
             .then(user => {
-                userObject.password = user.password;
-                if (!user || !userObject.validPassword(password)) {
-                if (!user || userObject.validPassword(password)) {
-                    return done(null, false, { message: 'Incorrect email or password.' });
-                }
-                return done(null, user);
+                if (!user) { return done(null, false, { message: 'Incorrect email' }); }
+                
+                userObject.password = user.dataValues.password;
+                userObject.validPassword(password).then(result => {
+                    if(result) {
+                        return done(null, user);
+                    }else{
+                        return done(null, false, { message: 'Incorrect email' });
+                    }
+                });
             });
     }
     ));
