@@ -68,24 +68,29 @@ router.put('/:id', auth.required,
         }
 
         async function findPosition({ bothPosition, listId }) {
-            const { leftPosition, rightPosition } = bothPosition;
             let position;
-
-            if(leftPosition) {
-                if(rightPosition) {
-                    position = Math.floor(Math.random() * (rightPosition - leftPosition + 1) + leftPosition);
+            console.log(bothPosition);
+            
+            if(bothPosition !== undefined) {
+                const { leftPosition, rightPosition } = bothPosition;
+                if(leftPosition) {
+                    if(rightPosition) {
+                        position = Math.floor(Math.random() * (rightPosition - leftPosition + 1) + leftPosition);
+                    }else {
+                        position = leftPosition + Math.floor(Math.random() * 5000);
+                    }
                 }else {
-                    position = leftPosition + Math.floor(Math.random() * 5000);
+                    position = rightPosition - Math.floor(Math.random() * 5000);
                 }
-            }else {
-                position = rightPosition - Math.floor(Math.random() * 5000);
-            }
+            }else { position = 65535; }
+            
+            console.log(position);
             const duplicatePosition = await Card.findOne({ 
                 where: { [Op.and]: [{ list_id: listId }, { position }] },
                 order: [['position', 'desc']]
             });
+            if(duplicatePosition) position = (duplicatePosition.dataValues.position + 0.1);
 
-            if(duplicatePosition) position += (duplicatePosition.dataValues.position + 0.1);
             
             return position;
         }
@@ -100,10 +105,8 @@ router.put('/:id', auth.required,
                     await updateCard(req.body.card);
                 }else{ 
                     // move card
-                    let position;
+                    const position = await findPosition({ bothPosition, listId });
 
-                    if(bothPosition) position = await findPosition({ bothPosition, listId });
-                    else position = 65535;
                     console.log(position);
                     await updateCard({ position, list_id: listId });
                 }

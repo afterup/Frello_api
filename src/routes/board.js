@@ -1,4 +1,4 @@
-const { Board, List, Card } = require('../models');
+const { Board, List, Card, User } = require('../models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 const { QueryTypes } = require('sequelize');
@@ -43,6 +43,9 @@ router.get('/:id', async function(req, res) {
             include: [{
                 model: List, 
                 include: [{ model: Card, attributes: ['card_id', 'position', 'list_id', 'title', 'updatedAt', 'user_id'] }] 
+            }, {
+                model: User,
+                attributes: ['username']
             }],
             order: [[List, 'position', 'ASC'], [List, Card, 'position', 'ASC']]
         });
