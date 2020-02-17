@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./node_modules/nodemon/bin/nodemon.js src/app.js --exec \"npm run lint && babel-node\"",
-    "lint": "./node_modules/.bin/eslint **/*.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "cross-env NODE_ENV=production PORT=8081 pm2 start src/app.js -i 0",
+    "dev": "nodemon src/app.js --exec",
+    "lint": "./node_modules/.bin/eslint **/*.js"
   },
   "author": "fora",
   "license": "ISC",
@@ -19,16 +19,22 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "helmet": "^3.21.2",
+    "hpp": "^0.2.3",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.9.1",
     "mysql2": "^2.0.2",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "pm2": "^4.2.3",
+    "retire": "^2.0.3",
     "sequelize": "^4.44.3",
-    "sqlite3": "^4.1.1"
+    "sqlite3": "^4.1.1",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

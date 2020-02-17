@@ -4,22 +4,34 @@ const cors = require('cors');
 
 const passport = require('passport');
 const passportConfig = require('./passport/passport');
+const helmet = require('helmet');
+const hpp = require('hpp');
+const morgan = require('morgan');
 
 // Create global app object
 const app = express();
 
 // express config defaults
-app.use(require('morgan')('dev'));
+if(process.env.NODE_ENV === 'production') {
+    app.use(morgan('combined'));
+    app.use(helmet());
+    app.use(hpp());
+}else{
+    app.use(morgan('dev'));
+}
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use(passport.initialize());
-passportConfig();
 
 const config = require('./config/config');
+app.use(passport.initialize());
+passportConfig();
 const { sequelize } = require('./models');
+const logger = require('./middlewares/logger');
 
 app.use(require('./routes/index'));
+
+
 
 /// error handler
 app.use(function(req, res, next) {
