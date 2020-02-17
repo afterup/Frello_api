@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             },
 
             title: {
-                type: DataTypes.STRING(1000),
+                type: DataTypes.STRING(500),
                 allowNull: false
             },
             position: {
@@ -18,7 +18,11 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
             }
         },
-        { timestamps: true }
+        {
+            timestamps: true,
+            charset: 'utf8',
+            collate: 'utf8_general_ci' 
+        }
     );
 
     List.associate = function(models) {

@@ -22,7 +22,11 @@ module.exports = (sequelize, DataTypes) => {
                 required: false
             }
         },
-        { timestamps: true }
+        {
+            timestamps: true,
+            charset: 'utf8',
+            collate: 'utf8_general_ci' 
+        }
     );
 
     Board.associate = function(models) {

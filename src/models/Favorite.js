@@ -9,7 +9,11 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true
             }
         },
-        { timestamps: false }
+        {
+            timestamps: false,
+            charset: 'utf8',
+            collate: 'utf8_general_ci' 
+        }
     );
 
     Favorite.associate = function(models) {

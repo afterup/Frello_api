@@ -17,7 +17,11 @@ module.exports = (sequelize, DataTypes) => {
             username: { type: DataTypes.STRING(30), allowNull: false, unique: true },
             password: { type: DataTypes.STRING(64), allowNull: false }
         },
-        { timestamps: true }
+        {
+            timestamps: true,
+            charset: 'utf8',
+            collate: 'utf8_general_ci' 
+        }
     );
 
     User.prototype.validPassword = function(password) {
@@ -29,7 +33,6 @@ module.exports = (sequelize, DataTypes) => {
 
         const genSalt = await bcrypt.genSalt(SALT_FACTOR);
         const hash = await bcrypt.hash(password, genSalt);
-        console.log(hash);
         this.setDataValue('password', hash);
     };
 
