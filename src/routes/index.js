@@ -1,9 +1,11 @@
 const router = require('express').Router();
+
 const user = require('./user');
 const board = require('./board');
 const list = require('./list');
 const card = require('./card');
 const favorite = require('./favorite');
+
 
 router.use('/', user);
 router.use('/board', board);

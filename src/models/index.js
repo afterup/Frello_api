@@ -7,8 +7,11 @@ const db = {};
 const sequelize = new Sequelize(
     config.db.database,
     config.db.user,
-    config.db.password,
-    config.db.options
+    config.db.password, {
+        host: config.db.host,
+        port: config.db.port,
+        dialect: 'mysql'
+    }
 );
 
 fs.readdirSync(__dirname)

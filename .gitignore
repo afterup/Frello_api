@@ -48,3 +48,6 @@ secrets.sh
 # Local dev bundle
 local-dev/bundle.js
 yarn.lock
+src/config/env.js
+prod-server/
+public/
