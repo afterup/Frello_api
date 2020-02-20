@@ -6,7 +6,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production PORT=3000 pm2 start prod-server",
     "lint": "./node_modules/.bin/eslint **/*.js",
-    "dev": "babel src --out-dir prod-server --watch"
+    "dev": "babel src --out-dir prod-server --watch",
+    "concurrently": "concurrently \"export NODE_ENV=development\" \"babel src --out-dir prod-server --watch\" \"nodemon prod-server/index.js\""
   },
   "author": "fora",
   "license": "ISC",
