@@ -1,9 +1,9 @@
 const router = require('express').Router();
 
-const user = require('./user');
-const board = require('./board');
-const list = require('./list');
-const card = require('./card');
+const user = require('./user/user.api');
+const board = require('./board/board.api');
+const list = require('./list/list.api');
+const card = require('./card/card.api');
 
 
 router.use('/', user);
