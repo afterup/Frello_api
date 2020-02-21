@@ -50,3 +50,5 @@ local-dev/bundle.js
 yarn.lock
 prod-server/
 public/
+.env.dev
+.env.prod
