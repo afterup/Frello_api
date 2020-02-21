@@ -6,9 +6,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const JWTStrategy = passportJWT.Strategy;
 
 const { User } = require('../models');
-const bcrypt = require('bcryptjs');
-const config = require('../config/config');
-require('dotenv').config();
+const { configs } = require('../config/config');
 
 module.exports = () => {
     passport.use(new LocalStrategy({
@@ -36,7 +34,7 @@ module.exports = () => {
   
     const opts = {};
     opts.jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken();
-    opts.secretOrKey = config.authentication.jwtSecret;
+    opts.secretOrKey = process.env.JWT_SECRET;
     passport.use(new JWTStrategy(opts,
         function (token, done) {
             console.log('token', token);

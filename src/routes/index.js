@@ -1,9 +1,9 @@
-const router = require('express').Router();
+import user from './user/user.api';
+import board from './board/board.api';
+import list from './list/list.api';
+import card from './card/card.api';
 
-const user = require('./user/user.api');
-const board = require('./board/board.api');
-const list = require('./list/list.api');
-const card = require('./card/card.api');
+const router = require('express').Router();
 
 
 router.use('/', user);

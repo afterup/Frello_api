@@ -1,6 +1,6 @@
+import auth from '../../middlewares/auth';
+import * as controller from './user.controller';
 const router = require('express').Router();
-const auth = require('../../middlewares/auth');
-import * as controller from './user.controller'
 
 // routes '/user'
 

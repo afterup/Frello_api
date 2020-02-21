@@ -1,6 +1,6 @@
-const router = require('express').Router();
-const auth = require('../../middlewares/auth');
 import * as controller from './list.controller';
+import auth from '../../middlewares/auth';
+const router = require('express').Router();
 
 // routes '/list'
 

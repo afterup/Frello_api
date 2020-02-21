@@ -34,11 +34,6 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'user_id',
             targetKey: 'user_id'
         });
-        Board.hasMany(models.Favorite, {
-            foreignKey: { name: 'board_id', allowNull: false },
-            sourceKey: 'board_id',
-            onDelete: 'cascade'
-        });
         Board.hasMany(models.List, {
             foreignKey: { name: 'board_id', allowNull: false },
             sourceKey: 'board_id',

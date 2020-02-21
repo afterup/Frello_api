@@ -1,7 +1,7 @@
+import { configs } from '../config/config';
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const config = require('../config/config');
 
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define(
@@ -37,34 +37,20 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     User.prototype.generateJWT = function(id) {
-        const ONE_WEEK = 60 * 60 * 24 * 7;
-        return jwt.sign(
-            {
-                user_id: id,
-                username: this.username
-            },
-            config.authentication.jwtSecret,
-            { expiresIn: ONE_WEEK }
+        return jwt.sign({ user_id: id, username: this.username },
+            process.env.JWT_SECRET
         );
     };
 
     User.prototype.toAuthJSON = function(id) {
         return {
-            user: {
-                username: this.username,
-                email: this.email
-            },
+            user: { username: this.username, email: this.email },
             token: this.generateJWT(id)
         };
     };
 
     User.associate = function(models) {
         User.hasMany(models.Board, {
-            foreignKey: { name: 'user_id', allowNull: false },
-            sourceKey: 'user_id',
-            onDelete: 'cascade'
-        });
-        User.hasMany(models.Favorite, {
             foreignKey: { name: 'user_id', allowNull: false },
             sourceKey: 'user_id',
             onDelete: 'cascade'
