@@ -7,7 +7,7 @@
     "dev": "cross-env NODE_ENV=development nodemon prod-server/index.js",
     "start": "cross-env NODE_ENV=production node prod-server/index.js",
     "lint": "./node_modules/.bin/eslint **/*.js",
-    "babel": "babel src --out-dir prod-server --watch"
+    "babel": "babel src --out-dir prod-server"
   },
   "author": "fora",
   "license": "ISC",

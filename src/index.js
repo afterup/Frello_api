@@ -14,16 +14,19 @@ const { sequelize } = require('./models');
 const passport = require('passport');
 const passportConfig = require('./passport/passport');
 
+app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api', router);
 app.use(history());
 app.use('/', function(req, res) {
     if(process.env.NODE_ENV === 'production') {
         return res.sendFile(path.join(__dirname, '../public', 'index.html'));
     }else {
-        return res.send('Running server in development mode');
+        return res.render('index.html');
+        // return res.send('Running server in development mode');
     }
 });
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 passportConfig();
 

@@ -1,6 +1,6 @@
-import { configs } from '../config/config';
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+
 
 
 module.exports = (sequelize, DataTypes) => {
