@@ -34,20 +34,16 @@ export function fetchUser(req, res, next) {
 }
 
 export async function createUser(req, res) {
-    async function validateDuplicate(username, email) { 
+    try{
+        const { username, email, password } = req.body.user;
+        const userObject = new User();
+
         const duplicateEmail = await User.findOne({ where: { email } });
         if(duplicateEmail) return res.status(406).send({ error: { message: 'DUPLICATE_EMAIL' } });
 
         const duplicateUsername = await User.findOne({ where: { username } });
         if(duplicateUsername) return res.status(406).send({ error: { message: 'DUPLICATE_USERNAME' } });
-    }
 
-    try{
-        const { username, email, password } = req.body.user;
-        const userObject = new User();
-
-        validateDuplicate(username, email);
-      
         await userObject.hashPassword(password);
         await User.create({ email, username, password: userObject.password });
 

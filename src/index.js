@@ -1,18 +1,17 @@
 import express from 'express';
-import logger from './middlewares/logger';
-
 import history from 'connect-history-api-fallback';
 import router from './routes/index';
 import path from 'path';
 
 import { setEnvironment } from './config/env';
 
+import { configs } from './config/config';
+import { sequelize } from './models';
+import passport from 'passport';
+import passportConfig from './passport/passport';
+
 const app = express();
 setEnvironment(app);
-const { configs } = require('./config/config');
-const { sequelize } = require('./models');
-const passport = require('passport');
-const passportConfig = require('./passport/passport');
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api', router);
@@ -21,12 +20,9 @@ app.use('/', function(req, res) {
     if(process.env.NODE_ENV === 'production') {
         return res.sendFile(path.join(__dirname, '../public', 'index.html'));
     }else {
-        return res.render('index.html');
-        // return res.send('Running server in development mode');
+        return res.send('Running server in development mode');
     }
 });
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 passportConfig();
 

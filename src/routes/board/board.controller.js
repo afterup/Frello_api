@@ -54,7 +54,9 @@ export async function updateBoard(req, res) {
 
         if (board.user_id === req.user.user_id) {
             await Board.update(req.body.board, { where: { board_id: req.params.id } });
-            return res.status(200).send({ message: 'SUCCESS' });
+            const board = await Board.findOne({ where: { board_id: req.params.id } });
+
+            return res.status(200).send({ message: 'SUCCESS', board });
         } else {
             return res.status(403).send({ error: { message: 'FORBIDDEN' } });
         }

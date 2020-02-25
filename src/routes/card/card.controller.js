@@ -34,14 +34,16 @@ export async function updateCard(req, res) {
     }
   
     try{
-        const { title, description, bothPosition, listId } = req.body.card;
+        const { type } = req.body.card;
         const card = await checkExistId({ whereObject: { card_id: req.params.id }, model: Card }, res);
       
         if(card.user_id === req.user.user_id) {
-            if(title || description) { 
+            if(type === 'update') { 
                 await updateCard(req.body.card);
             }else{ 
             /* move card */
+                const { bothPosition, listId } = req.body.card;
+                
                 const newPosition = await createMovePosition({ bothPosition });
                 const duplicateCheckPosition = await duplicatePosition({
                     whereObject: { list_id: listId }, 

@@ -18,14 +18,14 @@ module.exports = () => {
         
         User.findOne({ where: { email } })
             .then(user => {
-                if (!user) { return done(null, false, { message: 'Incorrect email' }); }
+                if (!user) { return done(null, false, { message: 'UNSIGNED_EMAIL' }); }
                 
                 userObject.password = user.dataValues.password;
                 userObject.validPassword(password).then(result => {
                     if(result) {
                         return done(null, user);
                     }else{
-                        return done(null, false, { message: 'Incorrect email' });
+                        return done(null, false, { message: 'INCORRECT_PASSWORD' });
                     }
                 });
             });

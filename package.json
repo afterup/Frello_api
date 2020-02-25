@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon prod-server/index.js",
-    "start": "cross-env NODE_ENV=production node prod-server/index.js",
+    "start": "cross-env NODE_ENV=production pm2 start prod-server/index.js",
     "lint": "./node_modules/.bin/eslint **/*.js",
-    "babel": "babel src --out-dir prod-server"
+    "babel": "babel src --out-dir prod-server --watch"
   },
   "author": "fora",
   "license": "ISC",
@@ -29,8 +29,7 @@
     "passport-local": "^1.0.0",
     "pm2": "^4.2.3",
     "retire": "^2.0.3",
-    "sqlite3": "^4.1.1",
-    "winston": "^3.2.1"
+    "sqlite3": "^4.1.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
