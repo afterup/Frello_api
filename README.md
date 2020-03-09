@@ -1,15 +1,12 @@
 # Frello API
-  
-Test ID : VIP@gmail.com  
-Test PW : 123vip
-
+http://www.frello.site/  
+TestID : vip@gmail.com  
+TestPW : 123vip
 
 # Model
 ![model](./model_frello.PNG)
 
 # Built with
-Vue.js, Vuex, vue-router,  
-axios, Sass, drag & drop api,  
 Node.js, Express.js,   
 MySQL, Sequelize, JWT, Passport.js, bcrypt, REST api, AWS
 
